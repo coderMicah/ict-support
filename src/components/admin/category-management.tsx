@@ -1,3 +1,9 @@
+import {
+	Dialog,
+	DialogBackdrop,
+	DialogPanel,
+	DialogTitle,
+} from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
@@ -126,131 +132,134 @@ export function CategoryManagement({
 		<div className="space-y-4">
 			<div className="flex items-center justify-between">
 				<h2 className="text-lg font-semibold tracking-tight">Categories</h2>
-				{!formOpen && (
-					<button
-						type="button"
-						onClick={openCreateForm}
-						className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
-					>
-						<Plus className="size-4" />
-						New category
-					</button>
-				)}
+				<button
+					type="button"
+					onClick={openCreateForm}
+					className="inline-flex items-center gap-1.5 rounded-md bg-neutral-900 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
+				>
+					<Plus className="size-4" />
+					New category
+				</button>
 			</div>
 
-			{formOpen && (
-				<form
-					onSubmit={handleSubmit(onSubmit)}
-					className="space-y-4 rounded-lg border border-neutral-200 bg-white p-5"
-				>
-					<div className="flex items-center justify-between">
-						<h3 className="text-sm font-semibold">
-							{editing ? "Edit category" : "New category"}
-						</h3>
-						<button
-							type="button"
-							onClick={closeForm}
-							className="rounded-md p-1 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
-						>
-							<X className="size-4" />
-						</button>
+			<Dialog open={formOpen} onClose={closeForm} className="relative z-50">
+				<DialogBackdrop className="fixed inset-0 bg-neutral-900/40" />
+
+				<div className="fixed inset-0 overflow-y-auto">
+					<div className="flex min-h-full items-center justify-center p-4">
+						<DialogPanel className="w-full max-w-lg rounded-xl bg-white shadow-xl">
+							<form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-6">
+								<div className="flex items-center justify-between">
+									<DialogTitle className="text-sm font-semibold">
+										{editing ? "Edit category" : "New category"}
+									</DialogTitle>
+									<button
+										type="button"
+										onClick={closeForm}
+										className="rounded-md p-1 text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
+									>
+										<X className="size-4" />
+									</button>
+								</div>
+
+								<div className="grid gap-4 sm:grid-cols-2">
+									<label className="block">
+										<span className="mb-1 block text-sm font-medium text-neutral-700">
+											Name
+										</span>
+										<input
+											{...register("name")}
+											onChange={(event) => {
+												setValue("name", event.target.value);
+												if (!touchedFields.slug) {
+													setValue("slug", slugify(event.target.value), {
+														shouldValidate: false,
+													});
+												}
+											}}
+											className={inputClass}
+										/>
+										{errors.name && (
+											<span className="mt-1 block text-xs text-red-600">
+												{errors.name.message}
+											</span>
+										)}
+									</label>
+
+									<label className="block">
+										<span className="mb-1 block text-sm font-medium text-neutral-700">
+											Slug
+										</span>
+										<input
+											{...register("slug")}
+											className={inputClass}
+											placeholder="networking"
+										/>
+										{errors.slug && (
+											<span className="mt-1 block text-xs text-red-600">
+												{errors.slug.message}
+											</span>
+										)}
+									</label>
+								</div>
+
+								<label className="block">
+									<span className="mb-1 block text-sm font-medium text-neutral-700">
+										Description
+									</span>
+									<textarea
+										{...register("description")}
+										rows={3}
+										className={inputClass}
+									/>
+									{errors.description && (
+										<span className="mt-1 block text-xs text-red-600">
+											{errors.description.message}
+										</span>
+									)}
+								</label>
+
+								<label className="block sm:w-40">
+									<span className="mb-1 block text-sm font-medium text-neutral-700">
+										Sort order
+									</span>
+									<input
+										type="number"
+										{...register("sortOrder", { valueAsNumber: true })}
+										className={inputClass}
+									/>
+									{errors.sortOrder && (
+										<span className="mt-1 block text-xs text-red-600">
+											{errors.sortOrder.message}
+										</span>
+									)}
+								</label>
+
+								<div className="flex items-center gap-2">
+									<button
+										type="submit"
+										disabled={submitting}
+										className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-60"
+									>
+										{submitting
+											? "Saving…"
+											: editing
+												? "Save changes"
+												: "Create category"}
+									</button>
+									<button
+										type="button"
+										onClick={closeForm}
+										className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-neutral-100"
+									>
+										Cancel
+									</button>
+								</div>
+							</form>
+						</DialogPanel>
 					</div>
-
-					<div className="grid gap-4 sm:grid-cols-2">
-						<label className="block">
-							<span className="mb-1 block text-sm font-medium text-neutral-700">
-								Name
-							</span>
-							<input
-								{...register("name")}
-								onChange={(event) => {
-									setValue("name", event.target.value);
-									if (!touchedFields.slug) {
-										setValue("slug", slugify(event.target.value), {
-											shouldValidate: false,
-										});
-									}
-								}}
-								className={inputClass}
-							/>
-							{errors.name && (
-								<span className="mt-1 block text-xs text-red-600">
-									{errors.name.message}
-								</span>
-							)}
-						</label>
-
-						<label className="block">
-							<span className="mb-1 block text-sm font-medium text-neutral-700">
-								Slug
-							</span>
-							<input
-								{...register("slug")}
-								className={inputClass}
-								placeholder="networking"
-							/>
-							{errors.slug && (
-								<span className="mt-1 block text-xs text-red-600">
-									{errors.slug.message}
-								</span>
-							)}
-						</label>
-					</div>
-
-					<label className="block">
-						<span className="mb-1 block text-sm font-medium text-neutral-700">
-							Description
-						</span>
-						<textarea
-							{...register("description")}
-							rows={3}
-							className={inputClass}
-						/>
-						{errors.description && (
-							<span className="mt-1 block text-xs text-red-600">
-								{errors.description.message}
-							</span>
-						)}
-					</label>
-
-					<label className="block sm:w-40">
-						<span className="mb-1 block text-sm font-medium text-neutral-700">
-							Sort order
-						</span>
-						<input
-							type="number"
-							{...register("sortOrder", { valueAsNumber: true })}
-							className={inputClass}
-						/>
-						{errors.sortOrder && (
-							<span className="mt-1 block text-xs text-red-600">
-								{errors.sortOrder.message}
-							</span>
-						)}
-					</label>
-
-					<div className="flex items-center gap-2">
-						<button
-							type="submit"
-							disabled={submitting}
-							className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-60"
-						>
-							{submitting
-								? "Saving…"
-								: editing
-									? "Save changes"
-									: "Create category"}
-						</button>
-						<button
-							type="button"
-							onClick={closeForm}
-							className="rounded-md border border-neutral-300 bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-neutral-100"
-						>
-							Cancel
-						</button>
-					</div>
-				</form>
-			)}
+				</div>
+			</Dialog>
 
 			<div className="overflow-x-auto rounded-lg border border-neutral-200 bg-white">
 				<table className="w-full min-w-[680px] text-sm">
