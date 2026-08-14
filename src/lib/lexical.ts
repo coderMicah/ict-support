@@ -68,3 +68,19 @@ export function extractTextFromLexicalState(stateJson: string): string {
 
 	return parts.join(" ").replace(/\s+/g, " ").trim();
 }
+
+/**
+ * Derives a plain-text summary from a serialized Lexical state.
+ *
+ * Used when an article has no explicit excerpt: category listings, search
+ * results, and link previews fall back to the body's first words.
+ */
+export function deriveExcerpt(stateJson: string, maxLength = 160): string {
+	const text = extractTextFromLexicalState(stateJson);
+
+	if (text.length <= maxLength) {
+		return text;
+	}
+
+	return `${text.slice(0, maxLength).trimEnd()}…`;
+}

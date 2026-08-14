@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as authRouteRouteImport } from './routes/(auth)/route'
 import { Route as protectedRouteRouteImport } from './routes/(protected)/route'
+import { Route as KbRouteRouteImport } from './routes/kb/route'
 import { Route as PendingApprovalRouteImport } from './routes/pending-approval'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as authSignOutRouteImport } from './routes/(auth)/sign-out'
@@ -20,10 +21,13 @@ import { Route as protectedAdminRouteRouteImport } from './routes/(protected)/ad
 import { Route as protectedArticlesRouteImport } from './routes/(protected)/articles'
 import { Route as protectedCategoriesRouteImport } from './routes/(protected)/categories'
 import { Route as protectedDashboardRouteImport } from './routes/(protected)/dashboard'
+import { Route as KbIndexRouteImport } from './routes/kb/index'
+import { Route as KbCategorySlugRouteImport } from './routes/kb/$categorySlug'
 import { Route as protectedAdminIndexRouteImport } from './routes/(protected)/admin/index'
 import { Route as protectedAdminCategoriesRouteImport } from './routes/(protected)/admin/categories'
 import { Route as protectedArticlesNewRouteImport } from './routes/(protected)/articles/new'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as KbCategorySlugArticleSlugRouteImport } from './routes/kb/$categorySlug/$articleSlug'
 import { Route as protectedArticlesArticleIdEditRouteImport } from './routes/(protected)/articles/$articleId/edit'
 
 const IndexRoute = IndexRouteImport.update({
@@ -37,6 +41,11 @@ const authRouteRoute = authRouteRouteImport.update({
 } as any)
 const protectedRouteRoute = protectedRouteRouteImport.update({
   id: '/(protected)',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KbRouteRoute = KbRouteRouteImport.update({
+  id: '/kb',
+  path: '/kb',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PendingApprovalRoute = PendingApprovalRouteImport.update({
@@ -79,6 +88,16 @@ const protectedDashboardRoute = protectedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => protectedRouteRoute,
 } as any)
+const KbIndexRoute = KbIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => KbRouteRoute,
+} as any)
+const KbCategorySlugRoute = KbCategorySlugRouteImport.update({
+  id: '/$categorySlug',
+  path: '/$categorySlug',
+  getParentRoute: () => KbRouteRoute,
+} as any)
 const protectedAdminIndexRoute = protectedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -100,6 +119,12 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KbCategorySlugArticleSlugRoute =
+  KbCategorySlugArticleSlugRouteImport.update({
+    id: '/$articleSlug',
+    path: '/$articleSlug',
+    getParentRoute: () => KbCategorySlugRoute,
+  } as any)
 const protectedArticlesArticleIdEditRoute =
   protectedArticlesArticleIdEditRouteImport.update({
     id: '/$articleId/edit',
@@ -109,6 +134,7 @@ const protectedArticlesArticleIdEditRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/kb': typeof KbRouteRouteWithChildren
   '/pending-approval': typeof PendingApprovalRoute
   '/admin': typeof protectedAdminRouteRouteWithChildren
   '/sign-in': typeof authSignInRoute
@@ -117,9 +143,12 @@ export interface FileRoutesByFullPath {
   '/articles': typeof protectedArticlesRouteWithChildren
   '/categories': typeof protectedCategoriesRoute
   '/dashboard': typeof protectedDashboardRoute
+  '/kb/$categorySlug': typeof KbCategorySlugRouteWithChildren
+  '/kb/': typeof KbIndexRoute
   '/admin/categories': typeof protectedAdminCategoriesRoute
   '/articles/new': typeof protectedArticlesNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/kb/$categorySlug/$articleSlug': typeof KbCategorySlugArticleSlugRoute
   '/admin/': typeof protectedAdminIndexRoute
   '/articles/$articleId/edit': typeof protectedArticlesArticleIdEditRoute
 }
@@ -132,9 +161,12 @@ export interface FileRoutesByTo {
   '/articles': typeof protectedArticlesRouteWithChildren
   '/categories': typeof protectedCategoriesRoute
   '/dashboard': typeof protectedDashboardRoute
+  '/kb/$categorySlug': typeof KbCategorySlugRouteWithChildren
+  '/kb': typeof KbIndexRoute
   '/admin/categories': typeof protectedAdminCategoriesRoute
   '/articles/new': typeof protectedArticlesNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/kb/$categorySlug/$articleSlug': typeof KbCategorySlugArticleSlugRoute
   '/admin': typeof protectedAdminIndexRoute
   '/articles/$articleId/edit': typeof protectedArticlesArticleIdEditRoute
 }
@@ -143,6 +175,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/(auth)': typeof authRouteRouteWithChildren
   '/(protected)': typeof protectedRouteRouteWithChildren
+  '/kb': typeof KbRouteRouteWithChildren
   '/pending-approval': typeof PendingApprovalRoute
   '/(protected)/admin': typeof protectedAdminRouteRouteWithChildren
   '/(auth)/sign-in': typeof authSignInRoute
@@ -151,9 +184,12 @@ export interface FileRoutesById {
   '/(protected)/articles': typeof protectedArticlesRouteWithChildren
   '/(protected)/categories': typeof protectedCategoriesRoute
   '/(protected)/dashboard': typeof protectedDashboardRoute
+  '/kb/$categorySlug': typeof KbCategorySlugRouteWithChildren
+  '/kb/': typeof KbIndexRoute
   '/(protected)/admin/categories': typeof protectedAdminCategoriesRoute
   '/(protected)/articles/new': typeof protectedArticlesNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/kb/$categorySlug/$articleSlug': typeof KbCategorySlugArticleSlugRoute
   '/(protected)/admin/': typeof protectedAdminIndexRoute
   '/(protected)/articles/$articleId/edit': typeof protectedArticlesArticleIdEditRoute
 }
@@ -161,6 +197,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/kb'
     | '/pending-approval'
     | '/admin'
     | '/sign-in'
@@ -169,9 +206,12 @@ export interface FileRouteTypes {
     | '/articles'
     | '/categories'
     | '/dashboard'
+    | '/kb/$categorySlug'
+    | '/kb/'
     | '/admin/categories'
     | '/articles/new'
     | '/api/auth/$'
+    | '/kb/$categorySlug/$articleSlug'
     | '/admin/'
     | '/articles/$articleId/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -184,9 +224,12 @@ export interface FileRouteTypes {
     | '/articles'
     | '/categories'
     | '/dashboard'
+    | '/kb/$categorySlug'
+    | '/kb'
     | '/admin/categories'
     | '/articles/new'
     | '/api/auth/$'
+    | '/kb/$categorySlug/$articleSlug'
     | '/admin'
     | '/articles/$articleId/edit'
   id:
@@ -194,6 +237,7 @@ export interface FileRouteTypes {
     | '/'
     | '/(auth)'
     | '/(protected)'
+    | '/kb'
     | '/pending-approval'
     | '/(protected)/admin'
     | '/(auth)/sign-in'
@@ -202,9 +246,12 @@ export interface FileRouteTypes {
     | '/(protected)/articles'
     | '/(protected)/categories'
     | '/(protected)/dashboard'
+    | '/kb/$categorySlug'
+    | '/kb/'
     | '/(protected)/admin/categories'
     | '/(protected)/articles/new'
     | '/api/auth/$'
+    | '/kb/$categorySlug/$articleSlug'
     | '/(protected)/admin/'
     | '/(protected)/articles/$articleId/edit'
   fileRoutesById: FileRoutesById
@@ -213,6 +260,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   authRouteRoute: typeof authRouteRouteWithChildren
   protectedRouteRoute: typeof protectedRouteRouteWithChildren
+  KbRouteRoute: typeof KbRouteRouteWithChildren
   PendingApprovalRoute: typeof PendingApprovalRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
@@ -238,6 +286,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof protectedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kb': {
+      id: '/kb'
+      path: '/kb'
+      fullPath: '/kb'
+      preLoaderRoute: typeof KbRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pending-approval': {
@@ -296,6 +351,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedDashboardRouteImport
       parentRoute: typeof protectedRouteRoute
     }
+    '/kb/': {
+      id: '/kb/'
+      path: '/'
+      fullPath: '/kb/'
+      preLoaderRoute: typeof KbIndexRouteImport
+      parentRoute: typeof KbRouteRoute
+    }
+    '/kb/$categorySlug': {
+      id: '/kb/$categorySlug'
+      path: '/$categorySlug'
+      fullPath: '/kb/$categorySlug'
+      preLoaderRoute: typeof KbCategorySlugRouteImport
+      parentRoute: typeof KbRouteRoute
+    }
     '/(protected)/admin/': {
       id: '/(protected)/admin/'
       path: '/'
@@ -323,6 +392,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/kb/$categorySlug/$articleSlug': {
+      id: '/kb/$categorySlug/$articleSlug'
+      path: '/$articleSlug'
+      fullPath: '/kb/$categorySlug/$articleSlug'
+      preLoaderRoute: typeof KbCategorySlugArticleSlugRouteImport
+      parentRoute: typeof KbCategorySlugRoute
     }
     '/(protected)/articles/$articleId/edit': {
       id: '/(protected)/articles/$articleId/edit'
@@ -394,10 +470,36 @@ const protectedRouteRouteWithChildren = protectedRouteRoute._addFileChildren(
   protectedRouteRouteChildren,
 )
 
+interface KbCategorySlugRouteChildren {
+  KbCategorySlugArticleSlugRoute: typeof KbCategorySlugArticleSlugRoute
+}
+
+const KbCategorySlugRouteChildren: KbCategorySlugRouteChildren = {
+  KbCategorySlugArticleSlugRoute: KbCategorySlugArticleSlugRoute,
+}
+
+const KbCategorySlugRouteWithChildren = KbCategorySlugRoute._addFileChildren(
+  KbCategorySlugRouteChildren,
+)
+
+interface KbRouteRouteChildren {
+  KbCategorySlugRoute: typeof KbCategorySlugRouteWithChildren
+  KbIndexRoute: typeof KbIndexRoute
+}
+
+const KbRouteRouteChildren: KbRouteRouteChildren = {
+  KbCategorySlugRoute: KbCategorySlugRouteWithChildren,
+  KbIndexRoute: KbIndexRoute,
+}
+
+const KbRouteRouteWithChildren =
+  KbRouteRoute._addFileChildren(KbRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   authRouteRoute: authRouteRouteWithChildren,
   protectedRouteRoute: protectedRouteRouteWithChildren,
+  KbRouteRoute: KbRouteRouteWithChildren,
   PendingApprovalRoute: PendingApprovalRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }

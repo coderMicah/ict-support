@@ -16,6 +16,7 @@ export type ArticleItem = {
 	state: string;
 	categoryId: number;
 	categoryName: string;
+	categorySlug: string;
 	createdAt: string;
 	updatedAt: string;
 };
@@ -29,6 +30,7 @@ type ArticleRow = {
 	state: string;
 	categoryId: number;
 	categoryName: string;
+	categorySlug: string;
 	createdAt: Date;
 	updatedAt: Date;
 };
@@ -42,6 +44,7 @@ const selectArticleRow = {
 	state: articles.state,
 	categoryId: articles.categoryId,
 	categoryName: categories.name,
+	categorySlug: categories.slug,
 	createdAt: articles.createdAt,
 	updatedAt: articles.updatedAt,
 };
@@ -56,6 +59,7 @@ function toArticleItem(row: ArticleRow): ArticleItem {
 		state: row.state,
 		categoryId: row.categoryId,
 		categoryName: row.categoryName,
+		categorySlug: row.categorySlug,
 		createdAt: row.createdAt.toISOString(),
 		updatedAt: row.updatedAt.toISOString(),
 	};
@@ -142,6 +146,83 @@ export async function createArticleAction(
 		}
 
 		throw error;
+	}
+}
+
+export type ArticleState = "draft" | "published" | "archived";
+
+export const articleStates: readonly ArticleState[] = [
+	"draft",
+	"published",
+	"archived",
+];
+
+/**
+ * Admin-only article lifecycle actions and the states each one may leave.
+ * Deleting is intentionally absent: any state can be permanently deleted.
+ */
+const articleTransitions: Record<
+	ArticleState,
+	{ target: ArticleState; verb: string }
+> = {
+	draft: { target: "published", verb: "publish" },
+	published: { target: "archived", verb: "archive" },
+	archived: { target: "published", verb: "restore" },
+};
+
+function assertLegalTransition(
+	current: string,
+	transition: keyof typeof articleTransitions,
+): void {
+	if (current !== transition) {
+		throw new AppError(
+			`An article in the "${current}" state cannot be ${articleTransitions[transition].verb}ed.`,
+			"ILLEGAL_STATE_TRANSITION",
+			409,
+		);
+	}
+}
+
+async function setArticleState(
+	id: number,
+	transition: keyof typeof articleTransitions,
+): Promise<ArticleItem> {
+	const row = await getArticleRowById(id);
+
+	if (!row) {
+		throw new AppError("Article not found.", "NOT_FOUND", 404);
+	}
+
+	assertLegalTransition(row.state, transition);
+
+	await db
+		.update(articles)
+		.set({ state: articleTransitions[transition].target })
+		.where(and(eq(articles.id, id), isNull(articles.deletedAt)));
+
+	return await getArticleAction(id);
+}
+
+export async function publishArticleAction(id: number): Promise<ArticleItem> {
+	return setArticleState(id, "draft");
+}
+
+export async function archiveArticleAction(id: number): Promise<ArticleItem> {
+	return setArticleState(id, "published");
+}
+
+export async function restoreArticleAction(id: number): Promise<ArticleItem> {
+	return setArticleState(id, "archived");
+}
+
+export async function deleteArticleAction(id: number): Promise<void> {
+	const [row] = await db
+		.delete(articles)
+		.where(and(eq(articles.id, id), isNull(articles.deletedAt)))
+		.returning({ id: articles.id });
+
+	if (!row) {
+		throw new AppError("Article not found.", "NOT_FOUND", 404);
 	}
 }
 

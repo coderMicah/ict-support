@@ -4,9 +4,13 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { db } from "#/db";
 import { articles } from "#/db/schema";
 import {
+	archiveArticleAction,
 	createArticleAction,
+	deleteArticleAction,
 	getArticleAction,
 	listArticlesAction,
+	publishArticleAction,
+	restoreArticleAction,
 	updateArticleAction,
 } from "#/lib/articles";
 import { createCategoryAction } from "#/lib/categories";
@@ -179,5 +183,104 @@ describe("listArticlesAction", () => {
 		const remaining = await listArticlesAction();
 
 		expect(remaining.map((row) => row.slug)).toEqual(["second"]);
+	});
+});
+
+describe("publishArticleAction", () => {
+	it("publishes a draft article", async () => {
+		const created = await createArticleAction(validInput());
+
+		const published = await publishArticleAction(created.id);
+
+		expect(published.state).toBe("published");
+	});
+
+	it("rejects publishing an already published article", async () => {
+		const created = await createArticleAction(validInput());
+		await publishArticleAction(created.id);
+
+		await expect(publishArticleAction(created.id)).rejects.toMatchObject({
+			code: "ILLEGAL_STATE_TRANSITION",
+		});
+	});
+
+	it("rejects publishing an archived article", async () => {
+		const created = await createArticleAction(validInput());
+		await publishArticleAction(created.id);
+		await archiveArticleAction(created.id);
+
+		await expect(publishArticleAction(created.id)).rejects.toMatchObject({
+			code: "ILLEGAL_STATE_TRANSITION",
+		});
+	});
+
+	it("throws NOT_FOUND for a missing article", async () => {
+		await expect(publishArticleAction(9999)).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
+	});
+});
+
+describe("archiveArticleAction", () => {
+	it("archives a published article", async () => {
+		const created = await createArticleAction(validInput());
+		await publishArticleAction(created.id);
+
+		const archived = await archiveArticleAction(created.id);
+
+		expect(archived.state).toBe("archived");
+	});
+
+	it("rejects archiving a draft", async () => {
+		const created = await createArticleAction(validInput());
+
+		await expect(archiveArticleAction(created.id)).rejects.toMatchObject({
+			code: "ILLEGAL_STATE_TRANSITION",
+		});
+	});
+});
+
+describe("restoreArticleAction", () => {
+	it("restores an archived article to published", async () => {
+		const created = await createArticleAction(validInput());
+		await publishArticleAction(created.id);
+		await archiveArticleAction(created.id);
+
+		const restored = await restoreArticleAction(created.id);
+
+		expect(restored.state).toBe("published");
+	});
+
+	it("rejects restoring a draft", async () => {
+		const created = await createArticleAction(validInput());
+
+		await expect(restoreArticleAction(created.id)).rejects.toMatchObject({
+			code: "ILLEGAL_STATE_TRANSITION",
+		});
+	});
+});
+
+describe("deleteArticleAction", () => {
+	it("permanently deletes an article from any state", async () => {
+		const draft = await createArticleAction(validInput({ slug: "draft" }));
+		const published = await createArticleAction(validInput({ slug: "pub" }));
+		await publishArticleAction(published.id);
+
+		await deleteArticleAction(draft.id);
+		await deleteArticleAction(published.id);
+
+		await expect(getArticleAction(draft.id)).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
+		await expect(getArticleAction(published.id)).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
+		await expect(listArticlesAction()).resolves.toHaveLength(0);
+	});
+
+	it("throws NOT_FOUND for a missing article", async () => {
+		await expect(deleteArticleAction(9999)).rejects.toMatchObject({
+			code: "NOT_FOUND",
+		});
 	});
 });

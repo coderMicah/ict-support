@@ -1,0 +1,27 @@
+import { describe, expect, it } from "vitest";
+
+import { can } from "#/lib/access-control";
+
+describe("article lifecycle access", () => {
+	it("allows admin to publish, archive, restore, and delete articles", () => {
+		expect(
+			can("admin", { articles: ["publish", "archive", "restore", "delete"] }),
+		).toBe(true);
+	});
+
+	it("denies officers publish, archive, restore, and delete", () => {
+		expect(can("user", { articles: ["publish"] })).toBe(false);
+		expect(can("user", { articles: ["archive"] })).toBe(false);
+		expect(can("user", { articles: ["restore"] })).toBe(false);
+		expect(can("user", { articles: ["delete"] })).toBe(false);
+	});
+
+	it("allows officers to view, create, and update articles", () => {
+		expect(can("user", { articles: ["view", "create", "update"] })).toBe(true);
+	});
+
+	it("denies unknown or missing roles", () => {
+		expect(can(null, { articles: ["publish"] })).toBe(false);
+		expect(can("superuser", { articles: ["view"] })).toBe(false);
+	});
+});
