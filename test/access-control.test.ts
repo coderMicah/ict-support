@@ -20,6 +20,15 @@ describe("article lifecycle access", () => {
 		expect(can("user", { articles: ["view", "create", "update"] })).toBe(true);
 	});
 
+	it("allows officers and admins to upload images", () => {
+		expect(can("user", { uploads: ["create"] })).toBe(true);
+		expect(can("admin", { uploads: ["create"] })).toBe(true);
+	});
+
+	it("denies image uploads to anonymous users", () => {
+		expect(can(null, { uploads: ["create"] })).toBe(false);
+	});
+
 	it("denies unknown or missing roles", () => {
 		expect(can(null, { articles: ["publish"] })).toBe(false);
 		expect(can("superuser", { articles: ["view"] })).toBe(false);

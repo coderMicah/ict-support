@@ -42,6 +42,8 @@ export const statement = {
 	],
 
 	contacts: ["view", "create", "update", "delete"],
+
+	uploads: ["create"],
 } as const;
 
 export type Statement = typeof statement;
@@ -94,6 +96,8 @@ export const roles = {
 		],
 
 		contacts: ["view", "create", "update", "delete"],
+
+		uploads: ["create"],
 	}),
 
 	user: ac.newRole({
@@ -106,6 +110,8 @@ export const roles = {
 		documents: ["view", "create", "update"],
 
 		contacts: ["view", "update"],
+
+		uploads: ["create"],
 	}),
 } as const;
 

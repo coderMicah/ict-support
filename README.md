@@ -26,6 +26,7 @@ Environment variables live in `.env.local` (not committed):
 - `BETTER_AUTH_URL` — public base URL of the app
 - `BETTER_AUTH_SECRET` — Better Auth signing secret
 - `ADMIN_*` / `USER_*` — seed account credentials
+- `UPLOADS_DIR` — optional directory for uploaded files (defaults to `./uploads`)
 
 ### Seed accounts
 

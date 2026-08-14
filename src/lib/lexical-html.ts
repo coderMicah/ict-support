@@ -8,6 +8,8 @@ type LexicalNode = {
 	url?: string;
 	link?: string;
 	listType?: string;
+	src?: string;
+	alt?: string;
 	children?: unknown;
 };
 
@@ -127,6 +129,17 @@ function renderBlock(node: LexicalNode): string {
 			return `<blockquote>${renderChildren(node.children)}</blockquote>`;
 		case "list":
 			return renderList(node);
+		case "image": {
+			const src = typeof node.src === "string" ? node.src : "";
+
+			if (!src.startsWith("/uploads/")) {
+				return "";
+			}
+
+			const alt = typeof node.alt === "string" ? node.alt : "";
+
+			return `<img src="${escapeHtml(src)}" alt="${escapeHtml(alt)}" class="my-3 block max-w-full rounded-md border border-neutral-200" />`;
+		}
 		default:
 			return renderChildren(node.children);
 	}
@@ -136,8 +149,9 @@ function renderBlock(node: LexicalNode): string {
  * Renders a serialized Lexical state to sanitized, server-safe HTML.
  *
  * Only the node types the article editor can produce are emitted. Text is
- * HTML-escaped and hyperlinks are restricted to http/https/mailto/tel URLs.
- * Returns an empty string for empty or invalid states.
+ * HTML-escaped, hyperlinks are restricted to http/https/mailto/tel URLs, and
+ * images must point at the app's own /uploads route. Returns an empty string
+ * for empty or invalid states.
  */
 export function renderLexicalBody(stateJson: string): string {
 	if (!isValidLexicalState(stateJson) || stateJson === "") {

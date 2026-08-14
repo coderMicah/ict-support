@@ -167,6 +167,49 @@ describe("renderLexicalBody", () => {
 		expect(html).toBe("<p>A<br>B</p>");
 	});
 
+	it("renders images that point at the app uploads route", () => {
+		const html = renderLexicalBody(
+			state([
+				{
+					type: "image",
+					version: 1,
+					src: "/uploads/abc123.jpg",
+					alt: "A network diagram",
+				},
+			]),
+		);
+
+		expect(html).toBe(
+			'<img src="/uploads/abc123.jpg" alt="A network diagram" class="my-3 block max-w-full rounded-md border border-neutral-200" />',
+		);
+	});
+
+	it("escapes image attributes", () => {
+		const html = renderLexicalBody(
+			state([
+				{
+					type: "image",
+					version: 1,
+					src: `/uploads/${"x".repeat(32)}.jpg`,
+					alt: '"onerror="alert(1)',
+				},
+			]),
+		);
+
+		expect(html).toContain('alt="&quot;onerror=&quot;alert(1)');
+	});
+
+	it("drops images that do not point at the app uploads route", () => {
+		const html = renderLexicalBody(
+			state([
+				{ type: "image", version: 1, src: "https://evil.example/x.png", alt: "x" },
+				{ type: "image", version: 1, src: "javascript:alert(1)", alt: "x" },
+			]),
+		);
+
+		expect(html).toBe("");
+	});
+
 	it("returns an empty string for empty, invalid, or malformed input", () => {
 		expect(renderLexicalBody("")).toBe("");
 		expect(renderLexicalBody("not json")).toBe("");

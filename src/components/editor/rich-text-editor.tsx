@@ -18,6 +18,7 @@ import { $createHeadingNode, HeadingNode } from "@lexical/rich-text";
 import { $setBlocksType } from "@lexical/selection";
 import {
 	$createParagraphNode,
+	$getRoot,
 	$getSelection,
 	$isRangeSelection,
 	CAN_REDO_COMMAND,
@@ -30,20 +31,27 @@ import {
 } from "lexical";
 import {
 	Bold,
+	ImagePlus,
 	Italic,
 	Link2,
 	List,
 	ListOrdered,
+	Loader2,
 	Redo2,
 	Underline,
 	Undo2,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 
+import { getErrorMessage } from "#/lib/errors";
 import {
 	emptyLexicalStateString,
 	extractTextFromLexicalState,
 } from "#/lib/lexical";
+import { uploadImage } from "#/server/uploads";
+
+import { $createImageNode, ImageNode } from "./image-node";
 
 const editorTheme = {
 	heading: {
@@ -72,6 +80,19 @@ type RichTextEditorProps = {
 const btnClass =
 	"rounded-md p-1.5 text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 disabled:cursor-not-allowed disabled:opacity-40";
 
+function readFileAsBase64(file: File): Promise<string> {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+
+		reader.onload = () => {
+			const result = reader.result as string;
+			resolve(result.split(",")[1] ?? "");
+		};
+		reader.onerror = () => reject(reader.error);
+		reader.readAsDataURL(file);
+	});
+}
+
 export function RichTextEditor({ initialBody, onChange }: RichTextEditorProps) {
 	const [mounted, setMounted] = useState(false);
 
@@ -83,7 +104,7 @@ export function RichTextEditor({ initialBody, onChange }: RichTextEditorProps) {
 		() => ({
 			namespace: "ArticleEditor",
 			theme: editorTheme,
-			nodes: [LinkNode, ListNode, ListItemNode, HeadingNode],
+			nodes: [LinkNode, ListNode, ListItemNode, HeadingNode, ImageNode],
 			editorState: initialBody || emptyLexicalStateString,
 			onError: (error: Error) => {
 				console.error(error);
@@ -130,6 +151,8 @@ function Toolbar() {
 	const [editor] = useLexicalComposerContext();
 	const [canUndo, setCanUndo] = useState(false);
 	const [canRedo, setCanRedo] = useState(false);
+	const [uploading, setUploading] = useState(false);
+	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		const unregisters = [
@@ -186,6 +209,37 @@ function Toolbar() {
 
 		if (url?.trim()) {
 			editor.dispatchCommand(TOGGLE_LINK_COMMAND, url.trim());
+		}
+	};
+
+	const insertImage = async (file: File) => {
+		setUploading(true);
+
+		try {
+			const base64 = await readFileAsBase64(file);
+			const uploaded = await uploadImage({
+				data: { filename: file.name, data: base64 },
+			});
+
+			editor.update(() => {
+				const selection = $getSelection();
+				const image = $createImageNode(
+					uploaded.url,
+					file.name.replace(/\.[^.]+$/, ""),
+				);
+
+				if ($isRangeSelection(selection)) {
+					selection.insertNodes([image]);
+				} else {
+					$getRoot().append(image);
+				}
+			});
+
+			toast.success("Image inserted.");
+		} catch (error) {
+			toast.error(getErrorMessage(error));
+		} finally {
+			setUploading(false);
 		}
 	};
 
@@ -267,6 +321,35 @@ function Toolbar() {
 			>
 				<ListOrdered className="size-4" />
 			</button>
+
+			<button
+				type="button"
+				title="Insert image"
+				aria-label="Insert image"
+				disabled={uploading}
+				onClick={() => fileInputRef.current?.click()}
+				className={btnClass}
+			>
+				{uploading ? (
+					<Loader2 className="size-4 animate-spin" />
+				) : (
+					<ImagePlus className="size-4" />
+				)}
+			</button>
+			<input
+				ref={fileInputRef}
+				type="file"
+				accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml"
+				className="hidden"
+				onChange={(event) => {
+					const file = event.target.files?.[0];
+					event.target.value = "";
+
+					if (file) {
+						insertImage(file);
+					}
+				}}
+			/>
 
 			<span className="mx-1 h-5 w-px bg-neutral-200" aria-hidden />
 

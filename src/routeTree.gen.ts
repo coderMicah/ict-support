@@ -23,6 +23,7 @@ import { Route as protectedCategoriesRouteImport } from './routes/(protected)/ca
 import { Route as protectedDashboardRouteImport } from './routes/(protected)/dashboard'
 import { Route as KbIndexRouteImport } from './routes/kb/index'
 import { Route as KbCategorySlugRouteImport } from './routes/kb/$categorySlug'
+import { Route as UploadsKeyRouteImport } from './routes/uploads/$key'
 import { Route as protectedAdminIndexRouteImport } from './routes/(protected)/admin/index'
 import { Route as protectedAdminCategoriesRouteImport } from './routes/(protected)/admin/categories'
 import { Route as protectedArticlesIndexRouteImport } from './routes/(protected)/articles/index'
@@ -99,6 +100,11 @@ const KbCategorySlugRoute = KbCategorySlugRouteImport.update({
   path: '/$categorySlug',
   getParentRoute: () => KbRouteRoute,
 } as any)
+const UploadsKeyRoute = UploadsKeyRouteImport.update({
+  id: '/uploads/$key',
+  path: '/uploads/$key',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const protectedAdminIndexRoute = protectedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/categories': typeof protectedCategoriesRoute
   '/dashboard': typeof protectedDashboardRoute
   '/kb/$categorySlug': typeof KbCategorySlugRouteWithChildren
+  '/uploads/$key': typeof UploadsKeyRoute
   '/kb/': typeof KbIndexRoute
   '/admin/categories': typeof protectedAdminCategoriesRoute
   '/articles/new': typeof protectedArticlesNewRoute
@@ -168,6 +175,7 @@ export interface FileRoutesByTo {
   '/categories': typeof protectedCategoriesRoute
   '/dashboard': typeof protectedDashboardRoute
   '/kb/$categorySlug': typeof KbCategorySlugRouteWithChildren
+  '/uploads/$key': typeof UploadsKeyRoute
   '/kb': typeof KbIndexRoute
   '/admin/categories': typeof protectedAdminCategoriesRoute
   '/articles/new': typeof protectedArticlesNewRoute
@@ -192,6 +200,7 @@ export interface FileRoutesById {
   '/(protected)/categories': typeof protectedCategoriesRoute
   '/(protected)/dashboard': typeof protectedDashboardRoute
   '/kb/$categorySlug': typeof KbCategorySlugRouteWithChildren
+  '/uploads/$key': typeof UploadsKeyRoute
   '/kb/': typeof KbIndexRoute
   '/(protected)/admin/categories': typeof protectedAdminCategoriesRoute
   '/(protected)/articles/new': typeof protectedArticlesNewRoute
@@ -215,6 +224,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/dashboard'
     | '/kb/$categorySlug'
+    | '/uploads/$key'
     | '/kb/'
     | '/admin/categories'
     | '/articles/new'
@@ -233,6 +243,7 @@ export interface FileRouteTypes {
     | '/categories'
     | '/dashboard'
     | '/kb/$categorySlug'
+    | '/uploads/$key'
     | '/kb'
     | '/admin/categories'
     | '/articles/new'
@@ -256,6 +267,7 @@ export interface FileRouteTypes {
     | '/(protected)/categories'
     | '/(protected)/dashboard'
     | '/kb/$categorySlug'
+    | '/uploads/$key'
     | '/kb/'
     | '/(protected)/admin/categories'
     | '/(protected)/articles/new'
@@ -272,6 +284,7 @@ export interface RootRouteChildren {
   protectedRouteRoute: typeof protectedRouteRouteWithChildren
   KbRouteRoute: typeof KbRouteRouteWithChildren
   PendingApprovalRoute: typeof PendingApprovalRoute
+  UploadsKeyRoute: typeof UploadsKeyRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -374,6 +387,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/kb/$categorySlug'
       preLoaderRoute: typeof KbCategorySlugRouteImport
       parentRoute: typeof KbRouteRoute
+    }
+    '/uploads/$key': {
+      id: '/uploads/$key'
+      path: '/uploads/$key'
+      fullPath: '/uploads/$key'
+      preLoaderRoute: typeof UploadsKeyRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/(protected)/admin/': {
       id: '/(protected)/admin/'
@@ -523,6 +543,7 @@ const rootRouteChildren: RootRouteChildren = {
   protectedRouteRoute: protectedRouteRouteWithChildren,
   KbRouteRoute: KbRouteRouteWithChildren,
   PendingApprovalRoute: PendingApprovalRoute,
+  UploadsKeyRoute: UploadsKeyRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
