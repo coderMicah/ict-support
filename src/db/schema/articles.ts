@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import {
 	index,
 	integer,
@@ -9,6 +10,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { categories } from "./categories";
+import { tsvector } from "./tsvector";
 
 export const articles = pgTable(
 	"articles",
@@ -18,6 +20,10 @@ export const articles = pgTable(
 		slug: text("slug").notNull().unique(),
 		excerpt: text("excerpt"),
 		body: jsonb("body").notNull(),
+		plainText: text("plain_text").notNull().default(""),
+		searchVector: tsvector("search_vector").generatedAlwaysAs(
+			sql`to_tsvector('english', ${sql.raw("title")} || ' ' || coalesce(${sql.raw("excerpt")}, '') || ' ' || ${sql.raw("plain_text")})`,
+		),
 		state: text("state").notNull().default("draft"),
 		categoryId: integer("category_id")
 			.notNull()
@@ -26,5 +32,8 @@ export const articles = pgTable(
 		updatedAt: timestamp("updated_at").notNull().defaultNow(),
 		deletedAt: timestamp("deleted_at"),
 	},
-	(table) => [index("articles_category_id_idx").on(table.categoryId)],
+	(table) => [
+		index("articles_category_id_idx").on(table.categoryId),
+		index("articles_search_idx").using("gin", table.searchVector),
+	],
 );

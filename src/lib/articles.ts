@@ -4,7 +4,10 @@ import { db } from "#/db";
 import { articles, categories } from "#/db/schema";
 import { isDuplicateSlug } from "#/lib/db-errors";
 import { AppError } from "#/lib/errors";
-import { emptyLexicalState } from "#/lib/lexical";
+import {
+	emptyLexicalStateString,
+	extractTextFromLexicalState,
+} from "#/lib/lexical";
 import { type ArticleInput, articleInputSchema } from "#/lib/schemas/articles";
 
 export type ArticleItem = {
@@ -66,7 +69,13 @@ function toArticleItem(row: ArticleRow): ArticleItem {
 }
 
 function toBody(input: ArticleInput): unknown {
-	return input.body ? JSON.parse(input.body) : emptyLexicalState;
+	return input.body
+		? JSON.parse(input.body)
+		: JSON.parse(emptyLexicalStateString);
+}
+
+function plainTextOf(input: ArticleInput): string {
+	return extractTextFromLexicalState(input.body ?? emptyLexicalStateString);
 }
 
 async function assertCategoryExists(categoryId: number): Promise<void> {
@@ -130,6 +139,7 @@ export async function createArticleAction(
 				slug: data.slug,
 				excerpt: data.excerpt ? data.excerpt : null,
 				body: toBody(data),
+				plainText: plainTextOf(data),
 				state: "draft",
 				categoryId: data.categoryId,
 			})
@@ -242,6 +252,7 @@ export async function updateArticleAction(
 				slug: data.slug,
 				excerpt: data.excerpt ? data.excerpt : null,
 				body: toBody(data),
+				plainText: plainTextOf(data),
 				categoryId: data.categoryId,
 			})
 			.where(and(eq(articles.id, id), isNull(articles.deletedAt)))

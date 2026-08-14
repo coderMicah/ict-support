@@ -16,6 +16,7 @@ import { Route as ContactsRouteRouteImport } from './routes/contacts/route'
 import { Route as DownloadsRouteRouteImport } from './routes/downloads/route'
 import { Route as KbRouteRouteImport } from './routes/kb/route'
 import { Route as PendingApprovalRouteImport } from './routes/pending-approval'
+import { Route as SearchRouteRouteImport } from './routes/search/route'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as authSignOutRouteImport } from './routes/(auth)/sign-out'
 import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
@@ -28,6 +29,7 @@ import { Route as ContactsIndexRouteImport } from './routes/contacts/index'
 import { Route as DownloadsIndexRouteImport } from './routes/downloads/index'
 import { Route as KbIndexRouteImport } from './routes/kb/index'
 import { Route as KbCategorySlugRouteImport } from './routes/kb/$categorySlug'
+import { Route as SearchIndexRouteImport } from './routes/search/index'
 import { Route as UploadsKeyRouteImport } from './routes/uploads/$key'
 import { Route as protectedAdminIndexRouteImport } from './routes/(protected)/admin/index'
 import { Route as protectedAdminCategoriesRouteImport } from './routes/(protected)/admin/categories'
@@ -73,6 +75,11 @@ const KbRouteRoute = KbRouteRouteImport.update({
 const PendingApprovalRoute = PendingApprovalRouteImport.update({
   id: '/pending-approval',
   path: '/pending-approval',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRouteRoute = SearchRouteRouteImport.update({
+  id: '/search',
+  path: '/search',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authSignInRoute = authSignInRouteImport.update({
@@ -134,6 +141,11 @@ const KbCategorySlugRoute = KbCategorySlugRouteImport.update({
   id: '/$categorySlug',
   path: '/$categorySlug',
   getParentRoute: () => KbRouteRoute,
+} as any)
+const SearchIndexRoute = SearchIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SearchRouteRoute,
 } as any)
 const UploadsKeyRoute = UploadsKeyRouteImport.update({
   id: '/uploads/$key',
@@ -210,6 +222,7 @@ export interface FileRoutesByFullPath {
   '/contacts': typeof ContactsRouteRouteWithChildren
   '/downloads': typeof DownloadsRouteRouteWithChildren
   '/kb': typeof KbRouteRouteWithChildren
+  '/search': typeof SearchRouteRouteWithChildren
   '/pending-approval': typeof PendingApprovalRoute
   '/admin': typeof protectedAdminRouteRouteWithChildren
   '/articles': typeof protectedArticlesRouteRouteWithChildren
@@ -224,6 +237,7 @@ export interface FileRoutesByFullPath {
   '/contacts/': typeof ContactsIndexRoute
   '/downloads/': typeof DownloadsIndexRoute
   '/kb/': typeof KbIndexRoute
+  '/search/': typeof SearchIndexRoute
   '/admin/categories': typeof protectedAdminCategoriesRoute
   '/articles/new': typeof protectedArticlesNewRoute
   '/contacts/manage': typeof protectedContactsManageRoute
@@ -250,6 +264,7 @@ export interface FileRoutesByTo {
   '/contacts': typeof ContactsIndexRoute
   '/downloads': typeof DownloadsIndexRoute
   '/kb': typeof KbIndexRoute
+  '/search': typeof SearchIndexRoute
   '/admin/categories': typeof protectedAdminCategoriesRoute
   '/articles/new': typeof protectedArticlesNewRoute
   '/contacts/manage': typeof protectedContactsManageRoute
@@ -271,6 +286,7 @@ export interface FileRoutesById {
   '/contacts': typeof ContactsRouteRouteWithChildren
   '/downloads': typeof DownloadsRouteRouteWithChildren
   '/kb': typeof KbRouteRouteWithChildren
+  '/search': typeof SearchRouteRouteWithChildren
   '/pending-approval': typeof PendingApprovalRoute
   '/(protected)/admin': typeof protectedAdminRouteRouteWithChildren
   '/(protected)/articles': typeof protectedArticlesRouteRouteWithChildren
@@ -285,6 +301,7 @@ export interface FileRoutesById {
   '/contacts/': typeof ContactsIndexRoute
   '/downloads/': typeof DownloadsIndexRoute
   '/kb/': typeof KbIndexRoute
+  '/search/': typeof SearchIndexRoute
   '/(protected)/admin/categories': typeof protectedAdminCategoriesRoute
   '/(protected)/articles/new': typeof protectedArticlesNewRoute
   '/(protected)/contacts/manage': typeof protectedContactsManageRoute
@@ -305,6 +322,7 @@ export interface FileRouteTypes {
     | '/contacts'
     | '/downloads'
     | '/kb'
+    | '/search'
     | '/pending-approval'
     | '/admin'
     | '/articles'
@@ -319,6 +337,7 @@ export interface FileRouteTypes {
     | '/contacts/'
     | '/downloads/'
     | '/kb/'
+    | '/search/'
     | '/admin/categories'
     | '/articles/new'
     | '/contacts/manage'
@@ -345,6 +364,7 @@ export interface FileRouteTypes {
     | '/contacts'
     | '/downloads'
     | '/kb'
+    | '/search'
     | '/admin/categories'
     | '/articles/new'
     | '/contacts/manage'
@@ -365,6 +385,7 @@ export interface FileRouteTypes {
     | '/contacts'
     | '/downloads'
     | '/kb'
+    | '/search'
     | '/pending-approval'
     | '/(protected)/admin'
     | '/(protected)/articles'
@@ -379,6 +400,7 @@ export interface FileRouteTypes {
     | '/contacts/'
     | '/downloads/'
     | '/kb/'
+    | '/search/'
     | '/(protected)/admin/categories'
     | '/(protected)/articles/new'
     | '/(protected)/contacts/manage'
@@ -400,6 +422,7 @@ export interface RootRouteChildren {
   ContactsRouteRoute: typeof ContactsRouteRouteWithChildren
   DownloadsRouteRoute: typeof DownloadsRouteRouteWithChildren
   KbRouteRoute: typeof KbRouteRouteWithChildren
+  SearchRouteRoute: typeof SearchRouteRouteWithChildren
   PendingApprovalRoute: typeof PendingApprovalRoute
   UploadsKeyRoute: typeof UploadsKeyRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -455,6 +478,13 @@ declare module '@tanstack/react-router' {
       path: '/pending-approval'
       fullPath: '/pending-approval'
       preLoaderRoute: typeof PendingApprovalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/sign-in': {
@@ -540,6 +570,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/kb/$categorySlug'
       preLoaderRoute: typeof KbCategorySlugRouteImport
       parentRoute: typeof KbRouteRoute
+    }
+    '/search/': {
+      id: '/search/'
+      path: '/'
+      fullPath: '/search/'
+      preLoaderRoute: typeof SearchIndexRouteImport
+      parentRoute: typeof SearchRouteRoute
     }
     '/uploads/$key': {
       id: '/uploads/$key'
@@ -772,6 +809,18 @@ const KbRouteRouteChildren: KbRouteRouteChildren = {
 const KbRouteRouteWithChildren =
   KbRouteRoute._addFileChildren(KbRouteRouteChildren)
 
+interface SearchRouteRouteChildren {
+  SearchIndexRoute: typeof SearchIndexRoute
+}
+
+const SearchRouteRouteChildren: SearchRouteRouteChildren = {
+  SearchIndexRoute: SearchIndexRoute,
+}
+
+const SearchRouteRouteWithChildren = SearchRouteRoute._addFileChildren(
+  SearchRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   authRouteRoute: authRouteRouteWithChildren,
@@ -779,6 +828,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactsRouteRoute: ContactsRouteRouteWithChildren,
   DownloadsRouteRoute: DownloadsRouteRouteWithChildren,
   KbRouteRoute: KbRouteRouteWithChildren,
+  SearchRouteRoute: SearchRouteRouteWithChildren,
   PendingApprovalRoute: PendingApprovalRoute,
   UploadsKeyRoute: UploadsKeyRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
