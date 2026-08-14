@@ -15,6 +15,13 @@
       "when": 1786692778104,
       "tag": "0001_clammy_cerise",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786696246572,
+      "tag": "0002_dear_tarantula",
+      "breakpoints": true
     }
   ]
 }

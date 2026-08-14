@@ -17,8 +17,10 @@ import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as authSignOutRouteImport } from './routes/(auth)/sign-out'
 import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
 import { Route as protectedAdminRouteRouteImport } from './routes/(protected)/admin/route'
+import { Route as protectedCategoriesRouteImport } from './routes/(protected)/categories'
 import { Route as protectedDashboardRouteImport } from './routes/(protected)/dashboard'
 import { Route as protectedAdminIndexRouteImport } from './routes/(protected)/admin/index'
+import { Route as protectedAdminCategoriesRouteImport } from './routes/(protected)/admin/categories'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -59,6 +61,11 @@ const protectedAdminRouteRoute = protectedAdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => protectedRouteRoute,
 } as any)
+const protectedCategoriesRoute = protectedCategoriesRouteImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => protectedRouteRoute,
+} as any)
 const protectedDashboardRoute = protectedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -69,6 +76,12 @@ const protectedAdminIndexRoute = protectedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => protectedAdminRouteRoute,
 } as any)
+const protectedAdminCategoriesRoute =
+  protectedAdminCategoriesRouteImport.update({
+    id: '/categories',
+    path: '/categories',
+    getParentRoute: () => protectedAdminRouteRoute,
+  } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -82,7 +95,9 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof authSignInRoute
   '/sign-out': typeof authSignOutRoute
   '/sign-up': typeof authSignUpRoute
+  '/categories': typeof protectedCategoriesRoute
   '/dashboard': typeof protectedDashboardRoute
+  '/admin/categories': typeof protectedAdminCategoriesRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/': typeof protectedAdminIndexRoute
 }
@@ -92,7 +107,9 @@ export interface FileRoutesByTo {
   '/sign-in': typeof authSignInRoute
   '/sign-out': typeof authSignOutRoute
   '/sign-up': typeof authSignUpRoute
+  '/categories': typeof protectedCategoriesRoute
   '/dashboard': typeof protectedDashboardRoute
+  '/admin/categories': typeof protectedAdminCategoriesRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin': typeof protectedAdminIndexRoute
 }
@@ -106,7 +123,9 @@ export interface FileRoutesById {
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-out': typeof authSignOutRoute
   '/(auth)/sign-up': typeof authSignUpRoute
+  '/(protected)/categories': typeof protectedCategoriesRoute
   '/(protected)/dashboard': typeof protectedDashboardRoute
+  '/(protected)/admin/categories': typeof protectedAdminCategoriesRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/(protected)/admin/': typeof protectedAdminIndexRoute
 }
@@ -119,7 +138,9 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-out'
     | '/sign-up'
+    | '/categories'
     | '/dashboard'
+    | '/admin/categories'
     | '/api/auth/$'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -129,7 +150,9 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-out'
     | '/sign-up'
+    | '/categories'
     | '/dashboard'
+    | '/admin/categories'
     | '/api/auth/$'
     | '/admin'
   id:
@@ -142,7 +165,9 @@ export interface FileRouteTypes {
     | '/(auth)/sign-in'
     | '/(auth)/sign-out'
     | '/(auth)/sign-up'
+    | '/(protected)/categories'
     | '/(protected)/dashboard'
+    | '/(protected)/admin/categories'
     | '/api/auth/$'
     | '/(protected)/admin/'
   fileRoutesById: FileRoutesById
@@ -213,6 +238,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedAdminRouteRouteImport
       parentRoute: typeof protectedRouteRoute
     }
+    '/(protected)/categories': {
+      id: '/(protected)/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof protectedCategoriesRouteImport
+      parentRoute: typeof protectedRouteRoute
+    }
     '/(protected)/dashboard': {
       id: '/(protected)/dashboard'
       path: '/dashboard'
@@ -225,6 +257,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof protectedAdminIndexRouteImport
+      parentRoute: typeof protectedAdminRouteRoute
+    }
+    '/(protected)/admin/categories': {
+      id: '/(protected)/admin/categories'
+      path: '/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof protectedAdminCategoriesRouteImport
       parentRoute: typeof protectedAdminRouteRoute
     }
     '/api/auth/$': {
@@ -254,10 +293,12 @@ const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
 )
 
 interface protectedAdminRouteRouteChildren {
+  protectedAdminCategoriesRoute: typeof protectedAdminCategoriesRoute
   protectedAdminIndexRoute: typeof protectedAdminIndexRoute
 }
 
 const protectedAdminRouteRouteChildren: protectedAdminRouteRouteChildren = {
+  protectedAdminCategoriesRoute: protectedAdminCategoriesRoute,
   protectedAdminIndexRoute: protectedAdminIndexRoute,
 }
 
@@ -266,11 +307,13 @@ const protectedAdminRouteRouteWithChildren =
 
 interface protectedRouteRouteChildren {
   protectedAdminRouteRoute: typeof protectedAdminRouteRouteWithChildren
+  protectedCategoriesRoute: typeof protectedCategoriesRoute
   protectedDashboardRoute: typeof protectedDashboardRoute
 }
 
 const protectedRouteRouteChildren: protectedRouteRouteChildren = {
   protectedAdminRouteRoute: protectedAdminRouteRouteWithChildren,
+  protectedCategoriesRoute: protectedCategoriesRoute,
   protectedDashboardRoute: protectedDashboardRoute,
 }
 

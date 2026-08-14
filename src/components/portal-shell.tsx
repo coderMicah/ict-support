@@ -2,9 +2,15 @@ import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 
 import { can } from "#/lib/access-control";
 
-const mainNavItems = [{ to: "/dashboard", label: "Dashboard" }];
+const mainNavItems = [
+	{ to: "/dashboard", label: "Dashboard" },
+	{ to: "/categories", label: "Knowledge Base" },
+];
 
-const adminNavItems = [{ to: "/admin", label: "Administration" }];
+const adminNavItems = [
+	{ to: "/admin", label: "Administration" },
+	{ to: "/admin/categories", label: "Categories" },
+];
 
 type PortalShellProps = {
 	user: {
