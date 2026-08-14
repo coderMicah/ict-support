@@ -2,6 +2,8 @@ import { LinkNode, TOGGLE_LINK_COMMAND } from "@lexical/link";
 import {
 	INSERT_ORDERED_LIST_COMMAND,
 	INSERT_UNORDERED_LIST_COMMAND,
+	ListItemNode,
+	ListNode,
 } from "@lexical/list";
 import { LexicalComposer } from "@lexical/react/LexicalComposer";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
@@ -81,7 +83,7 @@ export function RichTextEditor({ initialBody, onChange }: RichTextEditorProps) {
 		() => ({
 			namespace: "ArticleEditor",
 			theme: editorTheme,
-			nodes: [LinkNode],
+			nodes: [LinkNode, ListNode, ListItemNode],
 			editorState: initialBody || emptyLexicalStateString,
 			onError: (error: Error) => {
 				console.error(error);
