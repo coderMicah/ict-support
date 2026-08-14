@@ -14,7 +14,7 @@ import { LinkPlugin } from "@lexical/react/LexicalLinkPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { $createHeadingNode } from "@lexical/rich-text";
+import { $createHeadingNode, HeadingNode } from "@lexical/rich-text";
 import { $setBlocksType } from "@lexical/selection";
 import {
 	$createParagraphNode,
@@ -83,7 +83,7 @@ export function RichTextEditor({ initialBody, onChange }: RichTextEditorProps) {
 		() => ({
 			namespace: "ArticleEditor",
 			theme: editorTheme,
-			nodes: [LinkNode, ListNode, ListItemNode],
+			nodes: [LinkNode, ListNode, ListItemNode, HeadingNode],
 			editorState: initialBody || emptyLexicalStateString,
 			onError: (error: Error) => {
 				console.error(error);
