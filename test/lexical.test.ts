@@ -35,12 +35,12 @@ describe("isValidLexicalState", () => {
 		expect(isValidLexicalState("")).toBe(true);
 	});
 
-	it("keeps at least one root child so Lexical accepts the state", () => {
+	it("serializes to a state Lexical will accept (typed root, non-empty)", () => {
 		const parsed = JSON.parse(emptyLexicalStateString) as {
-			root: { children: unknown[] };
+			root: { type?: string; children: unknown[] };
 		};
 
-		expect(Array.isArray(parsed.root.children)).toBe(true);
+		expect(parsed.root.type).toBe("root");
 		expect(parsed.root.children.length).toBeGreaterThan(0);
 	});
 

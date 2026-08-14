@@ -1,5 +1,6 @@
 export const emptyLexicalState = {
 	root: {
+		type: "root",
 		children: [
 			{
 				type: "paragraph",
