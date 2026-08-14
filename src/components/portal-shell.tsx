@@ -5,6 +5,7 @@ import { can } from "#/lib/access-control";
 const mainNavItems = [
 	{ to: "/dashboard", label: "Dashboard" },
 	{ to: "/articles", label: "Articles" },
+	{ to: "/documents", label: "Documents" },
 	{ to: "/categories", label: "Knowledge Base" },
 ];
 

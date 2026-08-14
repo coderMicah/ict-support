@@ -1,6 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 
 import {
+	listApprovedDocumentsAction,
+	type PublicDocumentItem,
+} from "#/lib/documents";
+import {
 	getPublicArticleAction,
 	getPublicCategoryAction,
 	getPublicKnowledgeBaseAction,
@@ -25,6 +29,12 @@ export const getPublicKnowledgeBase = createServerFn({
 	method: "GET",
 }).handler(
 	async (): Promise<PublicKnowledgeBase> => getPublicKnowledgeBaseAction(),
+);
+
+export const getPublicDocuments = createServerFn({
+	method: "GET",
+}).handler(
+	async (): Promise<PublicDocumentItem[]> => listApprovedDocumentsAction(),
 );
 
 export const getPublicCategories = createServerFn({

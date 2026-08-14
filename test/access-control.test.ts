@@ -20,6 +20,23 @@ describe("article lifecycle access", () => {
 		expect(can("user", { articles: ["view", "create", "update"] })).toBe(true);
 	});
 
+	it("allows admin to approve, archive, restore, and delete documents", () => {
+		expect(
+			can("admin", { documents: ["approve", "archive", "restore", "delete"] }),
+		).toBe(true);
+	});
+
+	it("denies officers document approval and lifecycle actions", () => {
+		expect(can("user", { documents: ["approve"] })).toBe(false);
+		expect(can("user", { documents: ["archive"] })).toBe(false);
+		expect(can("user", { documents: ["restore"] })).toBe(false);
+		expect(can("user", { documents: ["delete"] })).toBe(false);
+	});
+
+	it("allows officers to view, create, and update documents", () => {
+		expect(can("user", { documents: ["view", "create", "update"] })).toBe(true);
+	});
+
 	it("allows officers and admins to upload images", () => {
 		expect(can("user", { uploads: ["create"] })).toBe(true);
 		expect(can("admin", { uploads: ["create"] })).toBe(true);

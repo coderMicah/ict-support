@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 /**
@@ -11,6 +11,8 @@ import path from "node:path";
 export interface Storage {
 	save(key: string, data: Uint8Array): Promise<void>;
 	read(key: string): Promise<Uint8Array>;
+	/** Deletes the bytes for a key. Optional: callers must guard with `?.`. */
+	remove?(key: string): Promise<void>;
 }
 
 export class DiskStorage implements Storage {
@@ -33,6 +35,10 @@ export class DiskStorage implements Storage {
 		const data = await readFile(this.resolve(key));
 
 		return new Uint8Array(data);
+	}
+
+	async remove(key: string): Promise<void> {
+		await rm(this.resolve(key), { force: true });
 	}
 }
 
