@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { db } from "#/db";
+import { createArticleAction } from "#/lib/articles";
 import {
 	createCategoryAction,
 	deleteCategoryAction,
@@ -122,6 +123,24 @@ describe("deleteCategoryAction", () => {
 	it("throws NOT_FOUND for a missing category", async () => {
 		await expect(deleteCategoryAction(9999)).rejects.toMatchObject({
 			code: "NOT_FOUND",
+		});
+	});
+
+	it("throws CATEGORY_IN_USE when articles reference the category", async () => {
+		const created = await createCategoryAction({
+			name: "In Use",
+			slug: "in-use",
+			sortOrder: 0,
+		});
+
+		await createArticleAction({
+			title: "Article",
+			slug: "article",
+			categoryId: created.id,
+		});
+
+		await expect(deleteCategoryAction(created.id)).rejects.toMatchObject({
+			code: "CATEGORY_IN_USE",
 		});
 	});
 });

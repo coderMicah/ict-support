@@ -2,6 +2,7 @@ import { asc, eq } from "drizzle-orm";
 
 import { db } from "#/db";
 import { categories } from "#/db/schema";
+import { getPgError, isDuplicateSlug } from "#/lib/db-errors";
 import { AppError } from "#/lib/errors";
 import {
 	type CategoryInput,
@@ -38,35 +39,6 @@ function toCategoryItem(row: CategoryRow): CategoryItem {
 		createdAt: row.createdAt.toISOString(),
 		updatedAt: row.updatedAt.toISOString(),
 	};
-}
-
-function getPgError(
-	error: unknown,
-): { code?: string; message?: string } | undefined {
-	let current: unknown = error;
-
-	while (
-		current &&
-		typeof current === "object" &&
-		"cause" in current &&
-		current.cause !== current
-	) {
-		current = (current as { cause: unknown }).cause;
-	}
-
-	if (current && typeof current === "object" && "code" in current) {
-		return current as { code?: string; message?: string };
-	}
-
-	return undefined;
-}
-
-function isDuplicateSlug(error: unknown): boolean {
-	const pgError = getPgError(error);
-
-	return (
-		pgError?.code === "23505" && pgError.message?.includes("slug") === true
-	);
 }
 
 function toValues(input: CategoryInput) {

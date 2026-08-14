@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+export const slugRegex = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export const categoryInputSchema = z.object({
 	name: z

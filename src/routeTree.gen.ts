@@ -17,11 +17,14 @@ import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as authSignOutRouteImport } from './routes/(auth)/sign-out'
 import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
 import { Route as protectedAdminRouteRouteImport } from './routes/(protected)/admin/route'
+import { Route as protectedArticlesRouteImport } from './routes/(protected)/articles'
 import { Route as protectedCategoriesRouteImport } from './routes/(protected)/categories'
 import { Route as protectedDashboardRouteImport } from './routes/(protected)/dashboard'
 import { Route as protectedAdminIndexRouteImport } from './routes/(protected)/admin/index'
 import { Route as protectedAdminCategoriesRouteImport } from './routes/(protected)/admin/categories'
+import { Route as protectedArticlesNewRouteImport } from './routes/(protected)/articles/new'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
+import { Route as protectedArticlesArticleIdEditRouteImport } from './routes/(protected)/articles/$articleId/edit'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -61,6 +64,11 @@ const protectedAdminRouteRoute = protectedAdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => protectedRouteRoute,
 } as any)
+const protectedArticlesRoute = protectedArticlesRouteImport.update({
+  id: '/articles',
+  path: '/articles',
+  getParentRoute: () => protectedRouteRoute,
+} as any)
 const protectedCategoriesRoute = protectedCategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
@@ -82,11 +90,22 @@ const protectedAdminCategoriesRoute =
     path: '/categories',
     getParentRoute: () => protectedAdminRouteRoute,
   } as any)
+const protectedArticlesNewRoute = protectedArticlesNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => protectedArticlesRoute,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const protectedArticlesArticleIdEditRoute =
+  protectedArticlesArticleIdEditRouteImport.update({
+    id: '/$articleId/edit',
+    path: '/$articleId/edit',
+    getParentRoute: () => protectedArticlesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -95,11 +114,14 @@ export interface FileRoutesByFullPath {
   '/sign-in': typeof authSignInRoute
   '/sign-out': typeof authSignOutRoute
   '/sign-up': typeof authSignUpRoute
+  '/articles': typeof protectedArticlesRouteWithChildren
   '/categories': typeof protectedCategoriesRoute
   '/dashboard': typeof protectedDashboardRoute
   '/admin/categories': typeof protectedAdminCategoriesRoute
+  '/articles/new': typeof protectedArticlesNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin/': typeof protectedAdminIndexRoute
+  '/articles/$articleId/edit': typeof protectedArticlesArticleIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -107,11 +129,14 @@ export interface FileRoutesByTo {
   '/sign-in': typeof authSignInRoute
   '/sign-out': typeof authSignOutRoute
   '/sign-up': typeof authSignUpRoute
+  '/articles': typeof protectedArticlesRouteWithChildren
   '/categories': typeof protectedCategoriesRoute
   '/dashboard': typeof protectedDashboardRoute
   '/admin/categories': typeof protectedAdminCategoriesRoute
+  '/articles/new': typeof protectedArticlesNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/admin': typeof protectedAdminIndexRoute
+  '/articles/$articleId/edit': typeof protectedArticlesArticleIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -123,11 +148,14 @@ export interface FileRoutesById {
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-out': typeof authSignOutRoute
   '/(auth)/sign-up': typeof authSignUpRoute
+  '/(protected)/articles': typeof protectedArticlesRouteWithChildren
   '/(protected)/categories': typeof protectedCategoriesRoute
   '/(protected)/dashboard': typeof protectedDashboardRoute
   '/(protected)/admin/categories': typeof protectedAdminCategoriesRoute
+  '/(protected)/articles/new': typeof protectedArticlesNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/(protected)/admin/': typeof protectedAdminIndexRoute
+  '/(protected)/articles/$articleId/edit': typeof protectedArticlesArticleIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -138,11 +166,14 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-out'
     | '/sign-up'
+    | '/articles'
     | '/categories'
     | '/dashboard'
     | '/admin/categories'
+    | '/articles/new'
     | '/api/auth/$'
     | '/admin/'
+    | '/articles/$articleId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -150,11 +181,14 @@ export interface FileRouteTypes {
     | '/sign-in'
     | '/sign-out'
     | '/sign-up'
+    | '/articles'
     | '/categories'
     | '/dashboard'
     | '/admin/categories'
+    | '/articles/new'
     | '/api/auth/$'
     | '/admin'
+    | '/articles/$articleId/edit'
   id:
     | '__root__'
     | '/'
@@ -165,11 +199,14 @@ export interface FileRouteTypes {
     | '/(auth)/sign-in'
     | '/(auth)/sign-out'
     | '/(auth)/sign-up'
+    | '/(protected)/articles'
     | '/(protected)/categories'
     | '/(protected)/dashboard'
     | '/(protected)/admin/categories'
+    | '/(protected)/articles/new'
     | '/api/auth/$'
     | '/(protected)/admin/'
+    | '/(protected)/articles/$articleId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -238,6 +275,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedAdminRouteRouteImport
       parentRoute: typeof protectedRouteRoute
     }
+    '/(protected)/articles': {
+      id: '/(protected)/articles'
+      path: '/articles'
+      fullPath: '/articles'
+      preLoaderRoute: typeof protectedArticlesRouteImport
+      parentRoute: typeof protectedRouteRoute
+    }
     '/(protected)/categories': {
       id: '/(protected)/categories'
       path: '/categories'
@@ -266,12 +310,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedAdminCategoriesRouteImport
       parentRoute: typeof protectedAdminRouteRoute
     }
+    '/(protected)/articles/new': {
+      id: '/(protected)/articles/new'
+      path: '/new'
+      fullPath: '/articles/new'
+      preLoaderRoute: typeof protectedArticlesNewRouteImport
+      parentRoute: typeof protectedArticlesRoute
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/(protected)/articles/$articleId/edit': {
+      id: '/(protected)/articles/$articleId/edit'
+      path: '/$articleId/edit'
+      fullPath: '/articles/$articleId/edit'
+      preLoaderRoute: typeof protectedArticlesArticleIdEditRouteImport
+      parentRoute: typeof protectedArticlesRoute
     }
   }
 }
@@ -305,14 +363,29 @@ const protectedAdminRouteRouteChildren: protectedAdminRouteRouteChildren = {
 const protectedAdminRouteRouteWithChildren =
   protectedAdminRouteRoute._addFileChildren(protectedAdminRouteRouteChildren)
 
+interface protectedArticlesRouteChildren {
+  protectedArticlesNewRoute: typeof protectedArticlesNewRoute
+  protectedArticlesArticleIdEditRoute: typeof protectedArticlesArticleIdEditRoute
+}
+
+const protectedArticlesRouteChildren: protectedArticlesRouteChildren = {
+  protectedArticlesNewRoute: protectedArticlesNewRoute,
+  protectedArticlesArticleIdEditRoute: protectedArticlesArticleIdEditRoute,
+}
+
+const protectedArticlesRouteWithChildren =
+  protectedArticlesRoute._addFileChildren(protectedArticlesRouteChildren)
+
 interface protectedRouteRouteChildren {
   protectedAdminRouteRoute: typeof protectedAdminRouteRouteWithChildren
+  protectedArticlesRoute: typeof protectedArticlesRouteWithChildren
   protectedCategoriesRoute: typeof protectedCategoriesRoute
   protectedDashboardRoute: typeof protectedDashboardRoute
 }
 
 const protectedRouteRouteChildren: protectedRouteRouteChildren = {
   protectedAdminRouteRoute: protectedAdminRouteRouteWithChildren,
+  protectedArticlesRoute: protectedArticlesRouteWithChildren,
   protectedCategoriesRoute: protectedCategoriesRoute,
   protectedDashboardRoute: protectedDashboardRoute,
 }
