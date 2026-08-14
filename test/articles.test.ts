@@ -70,12 +70,14 @@ describe("createArticleAction", () => {
 		expect(article.createdAt).toBeTruthy();
 	});
 
-	it("stores an empty editor state when the body is omitted", async () => {
+	it("stores a valid empty editor state when the body is omitted", async () => {
 		const article = await createArticleAction(validInput({ body: undefined }));
+		const parsed = JSON.parse(article.body) as {
+			root: { children: unknown[] };
+		};
 
-		expect(JSON.parse(article.body)).toMatchObject({
-			root: expect.objectContaining({ children: [] }),
-		});
+		expect(parsed.root).toBeTruthy();
+		expect(parsed.root.children.length).toBeGreaterThan(0);
 	});
 
 	it("rejects invalid input", async () => {

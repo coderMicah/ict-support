@@ -35,6 +35,15 @@ describe("isValidLexicalState", () => {
 		expect(isValidLexicalState("")).toBe(true);
 	});
 
+	it("keeps at least one root child so Lexical accepts the state", () => {
+		const parsed = JSON.parse(emptyLexicalStateString) as {
+			root: { children: unknown[] };
+		};
+
+		expect(Array.isArray(parsed.root.children)).toBe(true);
+		expect(parsed.root.children.length).toBeGreaterThan(0);
+	});
+
 	it("accepts a populated editor state", () => {
 		expect(isValidLexicalState(paragraph("Hello"))).toBe(true);
 	});

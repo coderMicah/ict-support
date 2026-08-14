@@ -1,6 +1,15 @@
 export const emptyLexicalState = {
 	root: {
-		children: [],
+		children: [
+			{
+				type: "paragraph",
+				version: 1,
+				children: [],
+				direction: null,
+				format: "",
+				indent: 0,
+			},
+		],
 		direction: null,
 		format: "",
 		indent: 0,
