@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 
+import { type ContactItem, listActiveContactsAction } from "#/lib/contacts";
 import {
 	listApprovedDocumentsAction,
 	type PublicDocumentItem,
@@ -36,6 +37,10 @@ export const getPublicDocuments = createServerFn({
 }).handler(
 	async (): Promise<PublicDocumentItem[]> => listApprovedDocumentsAction(),
 );
+
+export const getPublicContacts = createServerFn({
+	method: "GET",
+}).handler(async (): Promise<ContactItem[]> => listActiveContactsAction());
 
 export const getPublicCategories = createServerFn({
 	method: "GET",

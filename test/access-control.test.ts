@@ -37,6 +37,18 @@ describe("article lifecycle access", () => {
 		expect(can("user", { documents: ["view", "create", "update"] })).toBe(true);
 	});
 
+	it("allows admin to create, update, and delete contacts", () => {
+		expect(
+			can("admin", { contacts: ["create", "update", "delete"] }),
+		).toBe(true);
+	});
+
+	it("allows officers to view and update contacts, but not create or delete", () => {
+		expect(can("user", { contacts: ["view", "update"] })).toBe(true);
+		expect(can("user", { contacts: ["create"] })).toBe(false);
+		expect(can("user", { contacts: ["delete"] })).toBe(false);
+	});
+
 	it("allows officers and admins to upload images", () => {
 		expect(can("user", { uploads: ["create"] })).toBe(true);
 		expect(can("admin", { uploads: ["create"] })).toBe(true);

@@ -31,6 +31,12 @@ function Home() {
 					>
 						Downloads
 					</Link>
+					<Link
+						to="/contacts"
+						className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium transition-colors hover:bg-neutral-100"
+					>
+						Contacts
+					</Link>
 					{session?.user ? (
 						<Link
 							to="/dashboard"
