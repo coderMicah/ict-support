@@ -1,8 +1,9 @@
 import { Link, Outlet } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 
 import { useSession } from "#/lib/auth-client";
 
-export function KnowledgeBaseShell() {
+export function KnowledgeBaseShell({ children }: { children?: ReactNode }) {
 	const { data: session } = useSession();
 
 	return (
@@ -65,7 +66,7 @@ export function KnowledgeBaseShell() {
 			</header>
 
 			<main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8 sm:px-6">
-				<Outlet />
+				{children ?? <Outlet />}
 			</main>
 
 			<footer className="border-t border-neutral-200">

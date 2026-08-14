@@ -1,85 +1,75 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 
-import { useSession } from "#/lib/auth-client";
+import { KnowledgeBaseShell } from "#/components/kb/kb-shell";
+import { SearchBox } from "#/components/search/search-box";
 import { getPublicKnowledgeBase } from "#/server/public";
 
 export const Route = createFileRoute("/")({
+	beforeLoad: ({ context }) => {
+		if (context.session) {
+			throw redirect({
+				to:
+					context.session.user.approved === false
+						? "/pending-approval"
+						: "/dashboard",
+			});
+		}
+	},
 	loader: () => getPublicKnowledgeBase(),
+	head: () => ({
+		meta: [
+			{
+				title: "ICT Support Portal",
+			},
+			{
+				name: "description",
+				content:
+					"ICT guides and how-to articles for staff. Search the knowledge base, browse by category, and contact the ICT department.",
+			},
+		],
+	}),
 	component: Home,
 });
 
+function formatDate(iso: string): string {
+	return new Date(iso).toLocaleDateString(undefined, {
+		year: "numeric",
+		month: "short",
+		day: "numeric",
+	});
+}
+
 function Home() {
-	const { data: session } = useSession();
-	const { categories } = Route.useLoaderData();
+	const { categories, recentArticles } = Route.useLoaderData();
 
 	return (
-		<div className="flex min-h-dvh flex-col">
-			<header className="flex items-center justify-between border-b border-neutral-200 px-6 py-4">
-				<span className="text-sm font-semibold tracking-tight">
-					ICT Support
-				</span>
-				<div className="flex items-center gap-3">
-					<Link
-						to="/kb"
-						className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium transition-colors hover:bg-neutral-100"
-					>
-						Browse knowledge base
-					</Link>
-					<Link
-						to="/search"
-						className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium transition-colors hover:bg-neutral-100"
-					>
-						Search
-					</Link>
-					<Link
-						to="/downloads"
-						className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium transition-colors hover:bg-neutral-100"
-					>
-						Downloads
-					</Link>
-					<Link
-						to="/contacts"
-						className="rounded-md border border-neutral-300 px-4 py-2 text-sm font-medium transition-colors hover:bg-neutral-100"
-					>
-						Contacts
-					</Link>
-					{session?.user ? (
-						<Link
-							to="/dashboard"
-							className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
-						>
-							Go to dashboard
-						</Link>
-					) : (
-						<Link
-							to="/sign-in"
-							className="rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
-						>
-							Sign in
-						</Link>
-					)}
-				</div>
-			</header>
-
-			<main className="mx-auto w-full max-w-4xl flex-1 px-4 py-12 sm:px-6">
+		<KnowledgeBaseShell>
+			<div className="space-y-12">
 				<section className="text-center">
-					<h1 className="text-4xl font-bold">ICT Support Portal</h1>
-					<p className="mx-auto mt-4 max-w-xl text-lg text-neutral-600">
-						Guides and how-to articles published by the ICT department. Browse
-						the knowledge base without signing in; officers sign in to create
-						and manage content.
+					<h1 className="text-4xl font-bold tracking-tight">
+						ICT Support Portal
+					</h1>
+					<p className="mx-auto mt-4 max-w-2xl text-lg text-neutral-600">
+						Guides and how-to articles published by the ICT department. Search
+						the knowledge base, browse by category, or contact the ICT team
+						directly — no sign-in required.
 					</p>
-					<div className="mt-6 flex justify-center gap-3">
+					<div className="mx-auto mt-8 max-w-xl">
+						<SearchBox />
+					</div>
+					<p className="mt-4 text-sm text-neutral-500">
 						<Link
 							to="/kb"
-							className="rounded-md bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
+							className="inline-flex items-center gap-1.5 font-medium text-neutral-700 underline-offset-4 hover:underline"
 						>
-							Browse the knowledge base
+							Browse the full knowledge base
+							<ArrowRight className="size-4" aria-hidden="true" />
 						</Link>
-					</div>
+					</p>
 				</section>
 
-				<section className="mt-12">
+				<section>
 					<h2 className="text-lg font-semibold tracking-tight">
 						Browse by category
 					</h2>
@@ -115,7 +105,40 @@ function Home() {
 						</div>
 					)}
 				</section>
-			</main>
-		</div>
+
+				{recentArticles.length > 0 && (
+					<section>
+						<h2 className="text-lg font-semibold tracking-tight">
+							Recently published
+						</h2>
+						<ul className="mt-3 divide-y divide-neutral-200 rounded-lg border border-neutral-200 bg-white">
+							{recentArticles.map((article) => (
+								<li key={article.slug}>
+									<Link
+										to="/kb/$categorySlug/$articleSlug"
+										params={{
+											categorySlug: article.categorySlug,
+											articleSlug: article.slug,
+										}}
+										className="block p-4 transition-colors hover:bg-neutral-50"
+									>
+										<span className="font-medium text-neutral-900">
+											{article.title}
+										</span>
+										<span className="mt-0.5 block text-sm text-neutral-500">
+											{article.summary}
+										</span>
+										<span className="mt-2 block text-xs text-neutral-400">
+											{article.categoryName} · Updated{" "}
+											{formatDate(article.updatedAt)}
+										</span>
+									</Link>
+								</li>
+							))}
+						</ul>
+					</section>
+				)}
+			</div>
+		</KnowledgeBaseShell>
 	);
 }
