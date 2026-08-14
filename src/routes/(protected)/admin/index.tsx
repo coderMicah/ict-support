@@ -1,14 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { getAdminStats } from "#/server/admin";
+import { UserManagement } from "#/components/admin/user-management";
+import { getAdminStats, getAdminUsers } from "#/server/admin";
 
 export const Route = createFileRoute("/(protected)/admin/")({
-	loader: () => getAdminStats(),
+	loader: async () => {
+		const [stats, users] = await Promise.all([
+			getAdminStats(),
+			getAdminUsers(),
+		]);
+
+		return { stats, users };
+	},
 	component: AdminPage,
 });
 
 function AdminPage() {
-	const stats = Route.useLoaderData();
+	const { stats, users } = Route.useLoaderData();
 
 	return (
 		<div className="space-y-6">
@@ -19,12 +27,18 @@ function AdminPage() {
 				</p>
 			</div>
 
-			<div className="grid gap-4 sm:grid-cols-3">
+			<div className="grid gap-4 sm:grid-cols-4">
 				<div className="rounded-lg border border-neutral-200 bg-white p-5">
 					<p className="text-xs uppercase tracking-wider text-neutral-500">
 						Total users
 					</p>
 					<p className="mt-1 text-2xl font-bold">{stats.totalUsers}</p>
+				</div>
+				<div className="rounded-lg border border-neutral-200 bg-white p-5">
+					<p className="text-xs uppercase tracking-wider text-neutral-500">
+						Pending approval
+					</p>
+					<p className="mt-1 text-2xl font-bold">{stats.pendingCount}</p>
 				</div>
 				<div className="rounded-lg border border-neutral-200 bg-white p-5">
 					<p className="text-xs uppercase tracking-wider text-neutral-500">
@@ -40,32 +54,11 @@ function AdminPage() {
 				</div>
 			</div>
 
-			<div className="overflow-x-auto rounded-lg border border-neutral-200 bg-white">
-				<table className="w-full min-w-[560px] text-sm">
-					<thead className="border-b border-neutral-200 text-left text-xs uppercase tracking-wider text-neutral-500">
-						<tr>
-							<th className="px-4 py-3 font-medium">Name</th>
-							<th className="px-4 py-3 font-medium">Email</th>
-							<th className="px-4 py-3 font-medium">Role</th>
-							<th className="px-4 py-3 font-medium">Created</th>
-						</tr>
-					</thead>
-					<tbody>
-						{stats.recentUsers.map((row) => (
-							<tr
-								key={row.id}
-								className="border-b border-neutral-200 last:border-0"
-							>
-								<td className="px-4 py-3 font-medium">{row.name}</td>
-								<td className="px-4 py-3 text-neutral-500">{row.email}</td>
-								<td className="px-4 py-3 capitalize">{row.role ?? "user"}</td>
-								<td className="px-4 py-3 text-neutral-500">
-									{new Date(row.createdAt).toLocaleDateString()}
-								</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
+			<div className="space-y-3">
+				<h2 className="text-lg font-semibold tracking-tight">
+					User management
+				</h2>
+				<UserManagement initialUsers={users} />
 			</div>
 		</div>
 	);

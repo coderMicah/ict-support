@@ -21,6 +21,10 @@ export async function requireServerSession(): Promise<
 		throw new UnauthorizedError();
 	}
 
+	if (session.user.approved === false) {
+		throw new ForbiddenError("Your account is pending admin approval.");
+	}
+
 	return session;
 }
 

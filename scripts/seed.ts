@@ -35,7 +35,7 @@ async function main() {
 		if (existing[0]) {
 			await db
 				.update(user)
-				.set({ role: seed.role })
+				.set({ role: seed.role, approved: true })
 				.where(eq(user.id, existing[0].id));
 			console.log(`[seed] ${seed.email} already exists (role: ${seed.role})`);
 			continue;
@@ -56,7 +56,7 @@ async function main() {
 
 		await db
 			.update(user)
-			.set({ role: seed.role })
+			.set({ role: seed.role, approved: true })
 			.where(eq(user.id, result.user.id));
 		console.log(`[seed] created ${seed.email} (role: ${seed.role})`);
 	}

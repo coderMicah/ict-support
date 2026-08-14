@@ -28,6 +28,10 @@ export function AuthForm({ mode }: AuthFormProps) {
 			await navigate({ to: "/dashboard", replace: true });
 		};
 
+		const onPendingApproval = async () => {
+			await navigate({ to: "/pending-approval", replace: true });
+		};
+
 		const request =
 			mode === "sign-in"
 				? signIn.email({ email, password })
@@ -40,6 +44,11 @@ export function AuthForm({ mode }: AuthFormProps) {
 		request.then(
 			({ error: authError }) => {
 				if (authError) {
+					if (authError.code === "ACCOUNT_PENDING_APPROVAL") {
+						void onPendingApproval();
+						return;
+					}
+
 					setError(getErrorMessage(authError));
 					setLoading(false);
 					return;

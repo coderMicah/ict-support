@@ -21,9 +21,25 @@ export const statement = {
 
 	categories: ["view", "create", "update", "delete"],
 
-	articles: ["view", "create", "update", "delete", "publish"],
+	articles: [
+		"view",
+		"create",
+		"update",
+		"delete",
+		"publish",
+		"archive",
+		"restore",
+	],
 
-	documents: ["view", "create", "update", "delete", "approve"],
+	documents: [
+		"view",
+		"create",
+		"update",
+		"delete",
+		"approve",
+		"archive",
+		"restore",
+	],
 
 	contacts: ["view", "create", "update", "delete"],
 } as const;
@@ -57,9 +73,25 @@ export const roles = {
 
 		categories: ["view", "create", "update", "delete"],
 
-		articles: ["view", "create", "update", "delete", "publish"],
+		articles: [
+			"view",
+			"create",
+			"update",
+			"delete",
+			"publish",
+			"archive",
+			"restore",
+		],
 
-		documents: ["view", "create", "update", "delete", "approve"],
+		documents: [
+			"view",
+			"create",
+			"update",
+			"delete",
+			"approve",
+			"archive",
+			"restore",
+		],
 
 		contacts: ["view", "create", "update", "delete"],
 	}),

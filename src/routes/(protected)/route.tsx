@@ -10,6 +10,12 @@ export const Route = createFileRoute("/(protected)")({
 			});
 		}
 
+		if (context.session.user.approved === false) {
+			throw redirect({
+				to: "/pending-approval",
+			});
+		}
+
 		return {
 			session: context.session.session,
 			user: context.session.user,
