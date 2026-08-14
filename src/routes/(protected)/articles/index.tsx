@@ -12,7 +12,7 @@ import {
 	restoreArticle,
 } from "#/server/articles";
 
-export const Route = createFileRoute("/(protected)/articles")({
+export const Route = createFileRoute("/(protected)/articles/")({
 	loader: async ({ context }) => ({
 		articles: await getArticles(),
 		user: context.user,
