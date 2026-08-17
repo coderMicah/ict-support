@@ -3,8 +3,8 @@ import { useNavigate } from "@tanstack/react-router";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-
 import { RichTextEditor } from "#/components/editor/rich-text-editor";
+import { FormField } from "#/components/form-field";
 import type { ArticleItem } from "#/lib/articles";
 import type { CategoryItem } from "#/lib/categories";
 import { getErrorMessage } from "#/lib/errors";
@@ -87,10 +87,7 @@ export function ArticleForm({ mode, initial, categories }: ArticleFormProps) {
 			className="space-y-5 rounded-lg border border-neutral-200 bg-white p-5"
 		>
 			<div className="grid gap-4 sm:grid-cols-2">
-				<label className="block sm:col-span-2">
-					<span className="mb-1 block text-sm font-medium text-neutral-700">
-						Title
-					</span>
+				<FormField label="Title" error={errors.title?.message}>
 					<input
 						{...register("title")}
 						onChange={(event) => {
@@ -103,33 +100,17 @@ export function ArticleForm({ mode, initial, categories }: ArticleFormProps) {
 						}}
 						className={inputClass}
 					/>
-					{errors.title && (
-						<span className="mt-1 block text-xs text-red-600">
-							{errors.title.message}
-						</span>
-					)}
-				</label>
+				</FormField>
 
-				<label className="block">
-					<span className="mb-1 block text-sm font-medium text-neutral-700">
-						Slug
-					</span>
+				<FormField label="Slug" error={errors.slug?.message}>
 					<input
 						{...register("slug")}
 						className={inputClass}
 						placeholder="printer-configuration-guide"
 					/>
-					{errors.slug && (
-						<span className="mt-1 block text-xs text-red-600">
-							{errors.slug.message}
-						</span>
-					)}
-				</label>
+				</FormField>
 
-				<label className="block">
-					<span className="mb-1 block text-sm font-medium text-neutral-700">
-						Category
-					</span>
+				<FormField label="Category" error={errors.categoryId?.message}>
 					<select
 						{...register("categoryId", { valueAsNumber: true })}
 						className={inputClass}
@@ -140,12 +121,7 @@ export function ArticleForm({ mode, initial, categories }: ArticleFormProps) {
 							</option>
 						))}
 					</select>
-					{errors.categoryId && (
-						<span className="mt-1 block text-xs text-red-600">
-							{errors.categoryId.message}
-						</span>
-					)}
-				</label>
+				</FormField>
 			</div>
 
 			<label className="block">

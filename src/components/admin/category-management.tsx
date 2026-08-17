@@ -9,6 +9,8 @@ import { Pencil, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+
+import { FormField } from "#/components/form-field";
 import type { CategoryItem } from "#/lib/categories";
 import { getErrorMessage } from "#/lib/errors";
 import {
@@ -161,10 +163,7 @@ export function CategoryManagement({
 								</div>
 
 								<div className="grid gap-4 sm:grid-cols-2">
-									<label className="block">
-										<span className="mb-1 block text-sm font-medium text-neutral-700">
-											Name
-										</span>
+									<FormField label="Name" error={errors.name?.message}>
 										<input
 											{...register("name")}
 											onChange={(event) => {
@@ -177,61 +176,35 @@ export function CategoryManagement({
 											}}
 											className={inputClass}
 										/>
-										{errors.name && (
-											<span className="mt-1 block text-xs text-red-600">
-												{errors.name.message}
-											</span>
-										)}
-									</label>
+									</FormField>
 
-									<label className="block">
-										<span className="mb-1 block text-sm font-medium text-neutral-700">
-											Slug
-										</span>
+									<FormField label="Slug" error={errors.slug?.message}>
 										<input
 											{...register("slug")}
 											className={inputClass}
 											placeholder="networking"
 										/>
-										{errors.slug && (
-											<span className="mt-1 block text-xs text-red-600">
-												{errors.slug.message}
-											</span>
-										)}
-									</label>
+									</FormField>
 								</div>
 
-								<label className="block">
-									<span className="mb-1 block text-sm font-medium text-neutral-700">
-										Description
-									</span>
+								<FormField
+									label="Description"
+									error={errors.description?.message}
+								>
 									<textarea
 										{...register("description")}
 										rows={3}
 										className={inputClass}
 									/>
-									{errors.description && (
-										<span className="mt-1 block text-xs text-red-600">
-											{errors.description.message}
-										</span>
-									)}
-								</label>
+								</FormField>
 
-								<label className="block sm:w-40">
-									<span className="mb-1 block text-sm font-medium text-neutral-700">
-										Sort order
-									</span>
+								<FormField label="Sort order" error={errors.sortOrder?.message}>
 									<input
 										type="number"
 										{...register("sortOrder", { valueAsNumber: true })}
 										className={inputClass}
 									/>
-									{errors.sortOrder && (
-										<span className="mt-1 block text-xs text-red-600">
-											{errors.sortOrder.message}
-										</span>
-									)}
-								</label>
+								</FormField>
 
 								<div className="flex items-center gap-2">
 									<button

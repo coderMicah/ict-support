@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 
 import { renderLexicalBody } from "#/lib/lexical-html";
 import type { PublicArticleListItem } from "#/lib/public";
+import { formatDate } from "#/lib/utils";
 
 type ArticleViewProps = {
 	article: {
@@ -16,14 +17,6 @@ type ArticleViewProps = {
 	related: PublicArticleListItem[];
 	reportEmail: string;
 };
-
-function formatDate(iso: string): string {
-	return new Date(iso).toLocaleDateString(undefined, {
-		year: "numeric",
-		month: "short",
-		day: "numeric",
-	});
-}
 
 export function ArticleView({
 	article,

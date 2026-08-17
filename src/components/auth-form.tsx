@@ -3,6 +3,7 @@ import { type FormEvent, useState } from "react";
 
 import { signIn, signUp } from "#/lib/auth-client";
 import { getErrorMessage } from "#/lib/errors";
+import { inputClass } from "#/lib/utils";
 
 export type AuthMode = "sign-in" | "sign-up";
 
@@ -66,9 +67,6 @@ export function AuthForm({ mode }: AuthFormProps) {
 			},
 		);
 	};
-
-	const inputClass =
-		"w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 focus:border-neutral-500 focus:outline-none";
 
 	return (
 		<form onSubmit={handleSubmit} className="space-y-4">

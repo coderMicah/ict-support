@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+import { FormField } from "#/components/form-field";
 import type { ContactItem } from "#/lib/contacts";
 import { getErrorMessage } from "#/lib/errors";
 import { type ContactInput, contactInputSchema } from "#/lib/schemas/contacts";
@@ -167,108 +168,64 @@ export function ContactManagement({
 								</div>
 
 								<div className="grid gap-4 sm:grid-cols-2">
-									<label className="block">
-										<span className="mb-1 block text-sm font-medium text-neutral-700">
-											Name
-										</span>
+									<FormField label="Name" error={errors.name?.message}>
 										<input
 											{...register("name")}
 											className={inputClass}
 											placeholder="Jane Doe"
 										/>
-										{errors.name && (
-											<span className="mt-1 block text-xs text-red-600">
-												{errors.name.message}
-											</span>
-										)}
-									</label>
+									</FormField>
 
-									<label className="block">
-										<span className="mb-1 block text-sm font-medium text-neutral-700">
-											Role / title
-										</span>
+									<FormField label="Role / title" error={errors.role?.message}>
 										<input
 											{...register("role")}
 											className={inputClass}
 											placeholder="ICT Officer"
 										/>
-										{errors.role && (
-											<span className="mt-1 block text-xs text-red-600">
-												{errors.role.message}
-											</span>
-										)}
-									</label>
+									</FormField>
 
-									<label className="block">
-										<span className="mb-1 block text-sm font-medium text-neutral-700">
-											Phone
-										</span>
+									<FormField label="Phone" error={errors.phone?.message}>
 										<input
 											{...register("phone")}
 											className={inputClass}
 											placeholder="+27 12 345 6789"
 										/>
-										{errors.phone && (
-											<span className="mt-1 block text-xs text-red-600">
-												{errors.phone.message}
-											</span>
-										)}
-									</label>
+									</FormField>
 
-									<label className="block">
-										<span className="mb-1 block text-sm font-medium text-neutral-700">
-											Email
-										</span>
+									<FormField label="Email" error={errors.email?.message}>
 										<input
 											type="email"
 											{...register("email")}
 											className={inputClass}
 											placeholder="jane.doe@example.gov"
 										/>
-										{errors.email && (
-											<span className="mt-1 block text-xs text-red-600">
-												{errors.email.message}
-											</span>
-										)}
-									</label>
+									</FormField>
 								</div>
 
-								<label className="block">
-									<span className="mb-1 block text-sm font-medium text-neutral-700">
-										Coverage{" "}
-										<span className="font-normal text-neutral-400">
-											(optional)
-										</span>
-									</span>
+								<FormField
+									label="Coverage"
+									error={errors.coverage?.message}
+									optional
+								>
 									<textarea
 										{...register("coverage")}
 										rows={2}
 										className={inputClass}
 										placeholder="Covers the head office, weekdays 8am–5pm."
 									/>
-									{errors.coverage && (
-										<span className="mt-1 block text-xs text-red-600">
-											{errors.coverage.message}
-										</span>
-									)}
-								</label>
+								</FormField>
 
 								<div className="grid gap-4 sm:grid-cols-2">
-									<label className="block sm:w-40">
-										<span className="mb-1 block text-sm font-medium text-neutral-700">
-											Sort order
-										</span>
+									<FormField
+										label="Sort order"
+										error={errors.sortOrder?.message}
+									>
 										<input
 											type="number"
 											{...register("sortOrder", { valueAsNumber: true })}
 											className={inputClass}
 										/>
-										{errors.sortOrder && (
-											<span className="mt-1 block text-xs text-red-600">
-												{errors.sortOrder.message}
-											</span>
-										)}
-									</label>
+									</FormField>
 
 									<label className="flex items-center gap-2 pt-6">
 										<input

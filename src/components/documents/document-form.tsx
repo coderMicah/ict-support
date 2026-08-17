@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
+import { FormField } from "#/components/form-field";
 import type { CategoryItem } from "#/lib/categories";
 import type { DocumentItem } from "#/lib/documents";
 import { getErrorMessage } from "#/lib/errors";
@@ -68,23 +69,11 @@ export function DocumentForm({ mode, initial, categories }: DocumentFormProps) {
 			onSubmit={handleSubmit(onSubmit)}
 			className="space-y-5 rounded-lg border border-neutral-200 bg-white p-5"
 		>
-			<label className="block">
-				<span className="mb-1 block text-sm font-medium text-neutral-700">
-					Title
-				</span>
+			<FormField label="Title" error={errors.title?.message}>
 				<input {...register("title")} className={inputClass} />
-				{errors.title && (
-					<span className="mt-1 block text-xs text-red-600">
-						{errors.title.message}
-					</span>
-				)}
-			</label>
+			</FormField>
 
-			<label className="block">
-				<span className="mb-1 block text-sm font-medium text-neutral-700">
-					Category{" "}
-					<span className="font-normal text-neutral-400">(optional)</span>
-				</span>
+			<FormField label="Category" error={errors.categoryId?.message} optional>
 				<select
 					{...register("categoryId", {
 						valueAsNumber: true,
@@ -99,18 +88,10 @@ export function DocumentForm({ mode, initial, categories }: DocumentFormProps) {
 						</option>
 					))}
 				</select>
-				{errors.categoryId && (
-					<span className="mt-1 block text-xs text-red-600">
-						{errors.categoryId.message}
-					</span>
-				)}
-			</label>
+			</FormField>
 
 			{mode === "create" && (
-				<label className="block">
-					<span className="mb-1 block text-sm font-medium text-neutral-700">
-						File
-					</span>
+				<FormField label="File">
 					<input
 						ref={fileRef}
 						type="file"
@@ -120,7 +101,7 @@ export function DocumentForm({ mode, initial, categories }: DocumentFormProps) {
 					<span className="mt-1 block text-xs text-neutral-400">
 						Office documents and PDFs up to 20 MB.
 					</span>
-				</label>
+				</FormField>
 			)}
 
 			{mode === "edit" && initial && (
