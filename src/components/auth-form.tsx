@@ -24,8 +24,12 @@ export function AuthForm({ mode }: AuthFormProps) {
 		const email = String(form.get("email") ?? "");
 		const password = String(form.get("password") ?? "");
 
-		const onSuccess = async () => {
+		const onSuccessSignIn = async () => {
 			await navigate({ to: "/dashboard", replace: true });
+		};
+
+		const onSuccessSignUp = async () => {
+			await navigate({ to: "/sign-in", replace: true });
 		};
 
 		const onPendingApproval = async () => {
@@ -54,7 +58,7 @@ export function AuthForm({ mode }: AuthFormProps) {
 					return;
 				}
 
-				void onSuccess();
+				void (mode === "sign-in" ? onSuccessSignIn() : onSuccessSignUp());
 			},
 			() => {
 				setError("Something went wrong. Please try again.");

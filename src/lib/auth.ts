@@ -26,10 +26,37 @@ export const auth = betterAuth({
 
 	emailAndPassword: {
 		enabled: true,
-		autoSignIn: true,
+		autoSignIn: false,
 	},
 
 	databaseHooks: {
+		user: {
+			create: {
+				before: async (user) => {
+					const password = user?.password;
+					if (typeof password === "string") {
+						if (password.length < 8) {
+							throw new APIError("BAD_REQUEST", {
+								code: "PASSWORD_TOO_SHORT",
+								message: "Password must be at least 8 characters.",
+							});
+						}
+						if (!/[A-Z]/.test(password)) {
+							throw new APIError("BAD_REQUEST", {
+								code: "PASSWORD_TOO_WEAK",
+								message: "Password must contain an uppercase letter.",
+							});
+						}
+						if (!/[0-9]/.test(password)) {
+							throw new APIError("BAD_REQUEST", {
+								code: "PASSWORD_TOO_WEAK",
+								message: "Password must contain a number.",
+							});
+						}
+					}
+				},
+			},
+		},
 		session: {
 			create: {
 				before: async (session, context) => {
@@ -39,12 +66,19 @@ export const auth = betterAuth({
 
 					const user = (await context.context.internalAdapter.findUserById(
 						session.userId,
-					)) as { id: string; approved?: boolean } | null;
+					)) as { id: string; approved?: boolean; banned?: boolean } | null;
 
 					if (user && user.approved === false) {
 						throw new APIError("FORBIDDEN", {
 							code: "ACCOUNT_PENDING_APPROVAL",
 							message: "Your account is pending admin approval.",
+						});
+					}
+
+					if (user?.banned) {
+						throw new APIError("FORBIDDEN", {
+							code: "ACCOUNT_SUSPENDED",
+							message: "Your account has been suspended.",
 						});
 					}
 				},

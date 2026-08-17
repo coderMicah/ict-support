@@ -91,7 +91,11 @@ export const setUserApproval = createServerFn({
 })
 	.validator((data: { userId: string; approved: boolean }) => data)
 	.handler(async ({ data }) => {
-		await requireAdminSession();
+		const session = await requireAdminSession();
+
+		if (session.user.id === data.userId) {
+			return { ok: true };
+		}
 
 		await auth.api.adminUpdateUser({
 			body: {
@@ -101,6 +105,13 @@ export const setUserApproval = createServerFn({
 			headers: getRequestHeaders(),
 		});
 
+		if (!data.approved) {
+			await auth.api.revokeUserSessions({
+				body: { userId: data.userId },
+				headers: getRequestHeaders(),
+			});
+		}
+
 		return { ok: true };
 	});
 
@@ -109,7 +120,11 @@ export const setUserRole = createServerFn({
 })
 	.validator((data: { userId: string; role: "admin" | "user" }) => data)
 	.handler(async ({ data }) => {
-		await requireAdminSession();
+		const session = await requireAdminSession();
+
+		if (session.user.id === data.userId) {
+			return { ok: true };
+		}
 
 		await auth.api.setRole({
 			body: {

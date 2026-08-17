@@ -25,6 +25,19 @@ export async function requireServerSession(): Promise<
 		throw new ForbiddenError("Your account is pending admin approval.");
 	}
 
+	const user = session.user as {
+		banned?: boolean;
+		banExpires?: Date | string | null;
+	};
+	if (user.banned) {
+		if (user.banExpires && new Date(user.banExpires) > new Date()) {
+			throw new ForbiddenError("Your account has been suspended.");
+		}
+		if (!user.banExpires) {
+			throw new ForbiddenError("Your account has been suspended.");
+		}
+	}
+
 	return session;
 }
 

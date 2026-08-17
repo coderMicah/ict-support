@@ -16,6 +16,13 @@ export const Route = createFileRoute("/(protected)")({
 			});
 		}
 
+		const user = context.session.user as { banned?: boolean };
+		if (user.banned) {
+			throw redirect({
+				to: "/sign-in",
+			});
+		}
+
 		return {
 			session: context.session.session,
 			user: context.session.user,
