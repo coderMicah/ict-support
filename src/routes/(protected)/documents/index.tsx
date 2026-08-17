@@ -1,5 +1,7 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { useState } from "react";
 import { toast } from "sonner";
+import { z } from "zod";
 
 import { can } from "#/lib/access-control";
 import type { DocumentItem } from "#/lib/documents";
@@ -13,7 +15,13 @@ import {
 	restoreDocument,
 } from "#/server/documents";
 
+const documentsSearchSchema = z.object({
+	q: z.string().trim().max(200).optional(),
+	state: z.enum(["pending", "approved", "archived"]).optional(),
+});
+
 export const Route = createFileRoute("/(protected)/documents/")({
+	validateSearch: (search) => documentsSearchSchema.parse(search),
 	loader: async ({ context }) => ({
 		documents: await getDocuments(),
 		user: context.user,
@@ -21,14 +29,42 @@ export const Route = createFileRoute("/(protected)/documents/")({
 	component: DocumentsPage,
 });
 
+type DocumentState = "pending" | "approved" | "archived";
+
 function DocumentsPage() {
 	const { documents, user } = Route.useLoaderData();
+	const { q, state } = Route.useSearch();
 	const router = useRouter();
+	const navigate = Route.useNavigate();
+	const [searchInput, setSearchInput] = useState(q ?? "");
 
 	const canApprove = can(user.role, { documents: ["approve"] });
 	const canArchive = can(user.role, { documents: ["archive"] });
 	const canRestore = can(user.role, { documents: ["restore"] });
 	const canDelete = can(user.role, { documents: ["delete"] });
+
+	const setFilter = (next: { q?: string; state?: DocumentState }) => {
+		void navigate({
+			search: {
+				q: next.q ?? q,
+				state: next.state ?? state,
+			},
+			replace: true,
+		});
+	};
+
+	const filtered = documents.filter((document: DocumentItem) => {
+		if (state && document.state !== state) return false;
+		if (q) {
+			const query = q.toLowerCase();
+			return (
+				document.title.toLowerCase().includes(query) ||
+				document.originalName.toLowerCase().includes(query) ||
+				document.categoryName?.toLowerCase().includes(query)
+			);
+		}
+		return true;
+	});
 
 	const runAction = async (
 		action: () => Promise<unknown>,
@@ -61,6 +97,13 @@ function DocumentsPage() {
 	const actionButtonClass =
 		"rounded-md border border-neutral-300 bg-white px-2.5 py-1 text-xs font-medium transition-colors hover:bg-neutral-100";
 
+	const stateTabs = [
+		{ label: "All", value: undefined as DocumentState | undefined },
+		{ label: "Pending", value: "pending" as const },
+		{ label: "Approved", value: "approved" as const },
+		{ label: "Archived", value: "archived" as const },
+	];
+
 	return (
 		<div className="space-y-6">
 			<div className="flex items-start justify-between gap-4">
@@ -79,15 +122,53 @@ function DocumentsPage() {
 				</Link>
 			</div>
 
-			{documents.length === 0 ? (
+			<div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+				<div className="flex gap-1">
+					{stateTabs.map((tab) => (
+						<button
+							key={tab.label}
+							type="button"
+							onClick={() =>
+								setFilter({
+									state: tab.value === state ? undefined : tab.value,
+								})
+							}
+							className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+								state === tab.value || (!state && !tab.value)
+									? "bg-neutral-900 text-white"
+									: "text-neutral-600 hover:bg-neutral-100"
+							}`}
+						>
+							{tab.label}
+						</button>
+					))}
+				</div>
+
+				<input
+					type="text"
+					value={searchInput}
+					onChange={(e) => setSearchInput(e.target.value)}
+					onKeyDown={(e) => {
+						if (e.key === "Enter") {
+							setFilter({ q: searchInput || undefined });
+						}
+					}}
+					placeholder="Search documents..."
+					className="w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none sm:w-64"
+				/>
+			</div>
+
+			{filtered.length === 0 ? (
 				<div className="rounded-lg border border-neutral-200 bg-white p-8 text-center">
 					<p className="text-sm text-neutral-500">
-						No documents yet. Upload the first one.
+						{documents.length === 0
+							? "No documents yet. Upload the first one."
+							: "No documents match your filters."}
 					</p>
 				</div>
 			) : (
 				<div className="space-y-3">
-					{documents.map((document) => (
+					{filtered.map((document) => (
 						<div
 							key={document.id}
 							className="rounded-lg border border-neutral-200 bg-white p-5"

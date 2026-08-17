@@ -1,10 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { z } from "zod";
 
 import { ContactManagement } from "#/components/contacts/contact-management";
 import { can } from "#/lib/access-control";
 import { getContacts } from "#/server/contacts";
 
+const contactsSearchSchema = z.object({
+	q: z.string().trim().max(200).optional(),
+});
+
 export const Route = createFileRoute("/(protected)/contacts/manage")({
+	validateSearch: (search) => contactsSearchSchema.parse(search),
 	loader: async ({ context }) => ({
 		contacts: await getContacts(),
 		user: context.user,
@@ -14,6 +20,18 @@ export const Route = createFileRoute("/(protected)/contacts/manage")({
 
 function ManageContactsPage() {
 	const { contacts, user } = Route.useLoaderData();
+	const { q } = Route.useSearch();
+
+	const filtered = q
+		? contacts.filter((contact) => {
+				const query = q.toLowerCase();
+				return (
+					contact.name.toLowerCase().includes(query) ||
+					contact.role.toLowerCase().includes(query) ||
+					contact.email?.toLowerCase().includes(query)
+				);
+			})
+		: contacts;
 
 	return (
 		<div className="space-y-6">
@@ -26,7 +44,7 @@ function ManageContactsPage() {
 			</div>
 
 			<ContactManagement
-				initialContacts={contacts}
+				initialContacts={filtered}
 				canCreate={can(user.role, { contacts: ["create"] })}
 				canUpdate={can(user.role, { contacts: ["update"] })}
 				canDelete={can(user.role, { contacts: ["delete"] })}
