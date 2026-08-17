@@ -1,4 +1,3 @@
-import { redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequestHeaders } from "@tanstack/react-start/server";
 
@@ -12,18 +11,8 @@ export const getSession = createServerFn({ method: "GET" }).handler(
 	},
 );
 
-export const requireSession = createServerFn({
-	method: "GET",
-}).handler(async () => {
-	const session = await auth.api.getSession({
-		headers: getRequestHeaders(),
-	});
+export type ServerSession = Awaited<ReturnType<typeof getSession>>;
 
-	if (!session) {
-		throw redirect({
-			to: "/sign-in",
-		});
-	}
-
-	return session;
-});
+export async function getServerSession(): Promise<ServerSession> {
+	return await getSession();
+}

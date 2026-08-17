@@ -1,16 +1,9 @@
-import { getRequestHeaders } from "@tanstack/react-start/server";
-
 import { can, type Permission } from "#/lib/access-control";
-import { auth } from "#/lib/auth";
+import { getServerSession, type ServerSession } from "#/lib/auth-functions";
 import { ForbiddenError, UnauthorizedError } from "#/lib/errors";
 
-export type ServerSession = Awaited<ReturnType<typeof auth.api.getSession>>;
-
-export async function getServerSession(): Promise<ServerSession> {
-	return await auth.api.getSession({
-		headers: getRequestHeaders(),
-	});
-}
+export type { ServerSession };
+export { getServerSession } from "#/lib/auth-functions";
 
 export async function requireServerSession(): Promise<
 	NonNullable<ServerSession>
@@ -25,15 +18,11 @@ export async function requireServerSession(): Promise<
 		throw new ForbiddenError("Your account is pending admin approval.");
 	}
 
-	const user = session.user as {
-		banned?: boolean;
-		banExpires?: Date | string | null;
-	};
-	if (user.banned) {
-		if (user.banExpires && new Date(user.banExpires) > new Date()) {
-			throw new ForbiddenError("Your account has been suspended.");
-		}
-		if (!user.banExpires) {
+	// Better Auth returns banned/banExpires at runtime but doesn't expose them in its types.
+	const { banned, banExpires } = session.user as Record<string, unknown>;
+	if (banned) {
+		const expires = banExpires != null ? new Date(banExpires as string) : null;
+		if (!expires || expires > new Date()) {
 			throw new ForbiddenError("Your account has been suspended.");
 		}
 	}
@@ -53,8 +42,6 @@ export async function requirePermission(
 	return session;
 }
 
-export async function requireAdminSession(): Promise<
-	NonNullable<ServerSession>
-> {
+export async function requireAdminRole(): Promise<NonNullable<ServerSession>> {
 	return requirePermission({ user: ["list"] });
 }

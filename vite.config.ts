@@ -8,9 +8,9 @@ import { defineConfig } from "vite";
 const config = defineConfig({
 	resolve: { tsconfigPaths: true },
 	plugins: [
+		tanstackStart(),
 		devtools(),
 		tailwindcss(),
-		tanstackStart(),
 		viteReact(),
 		babel({ presets: [reactCompilerPreset()] }),
 	],

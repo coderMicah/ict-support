@@ -6,7 +6,7 @@ import { db } from "#/db";
 import { user } from "#/db/schema";
 import { auth } from "#/lib/auth";
 
-import { requireAdminSession } from "./guard";
+import { requireAdminRole } from "./guard";
 
 export type AdminUser = {
 	id: string;
@@ -54,7 +54,7 @@ const toAdminUser = (row: UserRow): AdminUser => ({
 export const getAdminStats = createServerFn({
 	method: "GET",
 }).handler(async (): Promise<AdminStats> => {
-	await requireAdminSession();
+	await requireAdminRole();
 
 	const totalUsers = await db.$count(user);
 	const adminCount = await db.$count(user, eq(user.role, "admin"));
@@ -79,7 +79,7 @@ export const getAdminStats = createServerFn({
 export const getAdminUsers = createServerFn({
 	method: "GET",
 }).handler(async (): Promise<AdminUser[]> => {
-	await requireAdminSession();
+	await requireAdminRole();
 
 	const rows = await db
 		.select(selectUserRow)
@@ -94,7 +94,7 @@ export const setUserApproval = createServerFn({
 })
 	.validator((data: { userId: string; approved: boolean }) => data)
 	.handler(async ({ data }) => {
-		const session = await requireAdminSession();
+		const session = await requireAdminRole();
 
 		if (session.user.id === data.userId) {
 			return { ok: true };
@@ -123,7 +123,7 @@ export const setUserRole = createServerFn({
 })
 	.validator((data: { userId: string; role: "admin" | "user" }) => data)
 	.handler(async ({ data }) => {
-		const session = await requireAdminSession();
+		const session = await requireAdminRole();
 
 		if (session.user.id === data.userId) {
 			return { ok: true };
@@ -145,7 +145,7 @@ export const setPublishPermission = createServerFn({
 })
 	.validator((data: { userId: string; canPublish: boolean }) => data)
 	.handler(async ({ data }) => {
-		await requireAdminSession();
+		await requireAdminRole();
 
 		await db
 			.update(user)
