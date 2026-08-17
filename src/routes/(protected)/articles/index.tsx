@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { can } from "#/lib/access-control";
 import type { ArticleItem } from "#/lib/articles";
 import { getErrorMessage } from "#/lib/errors";
+import { formatDate } from "#/lib/utils";
 import {
 	archiveArticle,
 	deleteArticle,
@@ -19,14 +20,6 @@ export const Route = createFileRoute("/(protected)/articles/")({
 	}),
 	component: ArticlesPage,
 });
-
-function formatDate(iso: string): string {
-	return new Date(iso).toLocaleDateString(undefined, {
-		year: "numeric",
-		month: "short",
-		day: "numeric",
-	});
-}
 
 function ArticlesPage() {
 	const { articles, user } = Route.useLoaderData();

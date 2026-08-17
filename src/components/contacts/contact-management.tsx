@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import type { ContactItem } from "#/lib/contacts";
 import { getErrorMessage } from "#/lib/errors";
 import { type ContactInput, contactInputSchema } from "#/lib/schemas/contacts";
+import { inputClass } from "#/lib/utils";
 import { createContact, deleteContact, updateContact } from "#/server/contacts";
 
 type ContactManagementProps = {
@@ -128,9 +129,6 @@ export function ContactManagement({
 			setBusyId(null);
 		}
 	};
-
-	const inputClass =
-		"w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none";
 
 	return (
 		<div className="space-y-4">

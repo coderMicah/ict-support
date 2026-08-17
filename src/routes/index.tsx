@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 
 import { KnowledgeBaseShell } from "#/components/kb/kb-shell";
 import { SearchBox } from "#/components/search/search-box";
+import { formatDate } from "#/lib/utils";
 import { getPublicKnowledgeBase } from "#/server/public";
 
 export const Route = createFileRoute("/")({
@@ -31,14 +32,6 @@ export const Route = createFileRoute("/")({
 	}),
 	component: Home,
 });
-
-function formatDate(iso: string): string {
-	return new Date(iso).toLocaleDateString(undefined, {
-		year: "numeric",
-		month: "short",
-		day: "numeric",
-	});
-}
 
 function Home() {
 	const { categories, recentArticles } = Route.useLoaderData();

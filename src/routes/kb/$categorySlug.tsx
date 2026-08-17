@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
+import { formatDate } from "#/lib/utils";
 import { getPublicCategory } from "#/server/public";
 
 export const Route = createFileRoute("/kb/$categorySlug")({
@@ -30,14 +31,6 @@ export const Route = createFileRoute("/kb/$categorySlug")({
 	},
 	component: CategoryPage,
 });
-
-function formatDate(iso: string): string {
-	return new Date(iso).toLocaleDateString(undefined, {
-		year: "numeric",
-		month: "short",
-		day: "numeric",
-	});
-}
 
 function CategoryPage() {
 	const page = Route.useLoaderData();

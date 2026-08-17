@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { SearchBox } from "#/components/search/search-box";
 import { emptySearchResult, type SearchResult } from "#/lib/search";
+import { formatSize } from "#/lib/utils";
 import { getSearchResults } from "#/server/search";
 
 const searchSchema = z.object({
@@ -28,16 +29,6 @@ export const Route = createFileRoute("/search/")({
 	}),
 	component: SearchPage,
 });
-
-function formatBytes(bytes: number): string {
-	if (bytes < 1024) {
-		return `${bytes} B`;
-	}
-	if (bytes < 1024 * 1024) {
-		return `${Math.round(bytes / 1024)} KB`;
-	}
-	return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
 
 function SearchPage() {
 	const results = Route.useLoaderData();
@@ -116,7 +107,7 @@ function SearchPage() {
 												{document.title}
 											</h3>
 											<p className="mt-1 text-sm text-neutral-500">
-												{document.originalName} · {formatBytes(document.size)}
+												{document.originalName} · {formatSize(document.size)}
 											</p>
 											<p className="mt-2 text-xs text-neutral-400">
 												{document.categoryName ?? "Download"}

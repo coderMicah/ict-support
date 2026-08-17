@@ -11,6 +11,7 @@ import {
 	type DocumentInput,
 	documentInputSchema,
 } from "#/lib/schemas/documents";
+import { inputClass, readFileAsBase64 } from "#/lib/utils";
 import { updateDocument, uploadDocument } from "#/server/documents";
 
 type DocumentFormProps = {
@@ -18,26 +19,6 @@ type DocumentFormProps = {
 	initial?: DocumentItem;
 	categories: CategoryItem[];
 };
-
-const inputClass =
-	"w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none";
-
-function readFileAsBase64(file: File): Promise<string> {
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.onload = () => {
-			const result = reader.result;
-			if (typeof result === "string") {
-				resolve(result.split(",")[1] ?? "");
-			} else {
-				reject(new Error("Could not read the selected file."));
-			}
-		};
-		reader.onerror = () =>
-			reject(new Error("Could not read the selected file."));
-		reader.readAsDataURL(file);
-	});
-}
 
 export function DocumentForm({ mode, initial, categories }: DocumentFormProps) {
 	const navigate = useNavigate();

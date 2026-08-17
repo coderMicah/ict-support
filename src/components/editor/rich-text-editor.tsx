@@ -49,6 +49,7 @@ import {
 	emptyLexicalStateString,
 	extractTextFromLexicalState,
 } from "#/lib/lexical";
+import { readFileAsBase64 } from "#/lib/utils";
 import { uploadImage } from "#/server/uploads";
 
 import { $createImageNode, ImageNode } from "./image-node";
@@ -79,19 +80,6 @@ type RichTextEditorProps = {
 
 const btnClass =
 	"rounded-md p-1.5 text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 disabled:cursor-not-allowed disabled:opacity-40";
-
-function readFileAsBase64(file: File): Promise<string> {
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-
-		reader.onload = () => {
-			const result = reader.result as string;
-			resolve(result.split(",")[1] ?? "");
-		};
-		reader.onerror = () => reject(reader.error);
-		reader.readAsDataURL(file);
-	});
-}
 
 export function RichTextEditor({ initialBody, onChange }: RichTextEditorProps) {
 	const [mounted, setMounted] = useState(false);

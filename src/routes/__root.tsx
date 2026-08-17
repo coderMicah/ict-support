@@ -14,7 +14,37 @@ export interface RouterContext {
 	session: Awaited<ReturnType<typeof getSession>>;
 }
 
+function RootErrorComponent({
+	error,
+	reset,
+}: {
+	error: unknown;
+	reset: () => void;
+}) {
+	const message =
+		error instanceof Error ? error.message : "An unexpected error occurred.";
+
+	return (
+		<div className="flex min-h-screen items-center justify-center bg-neutral-50 p-6">
+			<div className="w-full max-w-md rounded-lg border border-neutral-200 bg-white p-8 text-center">
+				<h1 className="text-xl font-bold tracking-tight text-neutral-900">
+					Something went wrong
+				</h1>
+				<p className="mt-2 text-sm text-neutral-500">{message}</p>
+				<button
+					type="button"
+					onClick={reset}
+					className="mt-6 rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
+				>
+					Try again
+				</button>
+			</div>
+		</div>
+	);
+}
+
 export const Route = createRootRouteWithContext<RouterContext>()({
+	errorComponent: RootErrorComponent,
 	head: () => ({
 		meta: [
 			{

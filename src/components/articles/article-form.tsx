@@ -11,6 +11,7 @@ import { getErrorMessage } from "#/lib/errors";
 import { emptyLexicalStateString } from "#/lib/lexical";
 import { type ArticleInput, articleInputSchema } from "#/lib/schemas/articles";
 import { slugify } from "#/lib/schemas/categories";
+import { inputClass } from "#/lib/utils";
 import { createArticle, updateArticle } from "#/server/articles";
 
 const excerptLength = 160;
@@ -20,9 +21,6 @@ type ArticleFormProps = {
 	initial?: ArticleItem;
 	categories: CategoryItem[];
 };
-
-const inputClass =
-	"w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-neutral-500 focus:outline-none";
 
 export function ArticleForm({ mode, initial, categories }: ArticleFormProps) {
 	const navigate = useNavigate();

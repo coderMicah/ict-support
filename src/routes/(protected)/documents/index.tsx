@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { can } from "#/lib/access-control";
 import type { DocumentItem } from "#/lib/documents";
 import { getErrorMessage } from "#/lib/errors";
+import { formatDate, formatSize } from "#/lib/utils";
 import {
 	approveDocument,
 	archiveDocument,
@@ -19,22 +20,6 @@ export const Route = createFileRoute("/(protected)/documents/")({
 	}),
 	component: DocumentsPage,
 });
-
-function formatDate(iso: string): string {
-	return new Date(iso).toLocaleDateString(undefined, {
-		year: "numeric",
-		month: "short",
-		day: "numeric",
-	});
-}
-
-function formatSize(bytes: number): string {
-	if (bytes >= 1024 * 1024) {
-		return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-	}
-
-	return `${Math.max(1, Math.round(bytes / 1024))} KB`;
-}
 
 function DocumentsPage() {
 	const { documents, user } = Route.useLoaderData();

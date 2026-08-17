@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
+import { formatDate } from "#/lib/utils";
 import { getPublicKnowledgeBase } from "#/server/public";
 
 export const Route = createFileRoute("/kb/")({
@@ -18,14 +19,6 @@ export const Route = createFileRoute("/kb/")({
 	}),
 	component: KnowledgeBaseHome,
 });
-
-function formatDate(iso: string): string {
-	return new Date(iso).toLocaleDateString(undefined, {
-		year: "numeric",
-		month: "short",
-		day: "numeric",
-	});
-}
 
 function KnowledgeBaseHome() {
 	const { categories, recentArticles } = Route.useLoaderData();

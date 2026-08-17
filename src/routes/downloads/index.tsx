@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { formatDate, formatSize } from "#/lib/utils";
 import { getPublicDocuments } from "#/server/public";
 
 export const Route = createFileRoute("/downloads/")({
@@ -18,22 +19,6 @@ export const Route = createFileRoute("/downloads/")({
 	}),
 	component: DownloadsPage,
 });
-
-function formatDate(iso: string): string {
-	return new Date(iso).toLocaleDateString(undefined, {
-		year: "numeric",
-		month: "short",
-		day: "numeric",
-	});
-}
-
-function formatSize(bytes: number): string {
-	if (bytes >= 1024 * 1024) {
-		return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-	}
-
-	return `${Math.max(1, Math.round(bytes / 1024))} KB`;
-}
 
 function DownloadsPage() {
 	const documents = Route.useLoaderData();
