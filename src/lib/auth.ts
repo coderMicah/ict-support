@@ -102,5 +102,12 @@ export const auth = betterAuth({
 		tanstackStartCookies(),
 	],
 
-	trustedOrigins: ["http://localhost:3000", "http://localhost:3001"],
+	trustedOrigins: (process.env.TRUSTED_ORIGINS ?? "")
+		.split(",")
+		.filter(Boolean)
+		.concat([
+			process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
+			"http://localhost:3000",
+			"http://localhost:3001",
+		]),
 });
