@@ -5,6 +5,11 @@ import { desc, eq } from "drizzle-orm";
 import { db } from "#/db";
 import { user } from "#/db/schema";
 import { auth } from "#/lib/auth";
+import {
+	setPublishPermissionSchema,
+	setUserApprovalSchema,
+	setUserRoleSchema,
+} from "#/lib/schemas/admin";
 
 import { requireAdminRole } from "./guard";
 
@@ -92,7 +97,7 @@ export const getAdminUsers = createServerFn({
 export const setUserApproval = createServerFn({
 	method: "POST",
 })
-	.validator((data: { userId: string; approved: boolean }) => data)
+	.validator(setUserApprovalSchema)
 	.handler(async ({ data }) => {
 		const session = await requireAdminRole();
 
@@ -121,7 +126,7 @@ export const setUserApproval = createServerFn({
 export const setUserRole = createServerFn({
 	method: "POST",
 })
-	.validator((data: { userId: string; role: "admin" | "user" }) => data)
+	.validator(setUserRoleSchema)
 	.handler(async ({ data }) => {
 		const session = await requireAdminRole();
 
@@ -143,7 +148,7 @@ export const setUserRole = createServerFn({
 export const setPublishPermission = createServerFn({
 	method: "POST",
 })
-	.validator((data: { userId: string; canPublish: boolean }) => data)
+	.validator(setPublishPermissionSchema)
 	.handler(async ({ data }) => {
 		await requireAdminRole();
 

@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { toast } from "sonner";
 
+import { getErrorMessage } from "#/lib/errors";
 import {
 	type AdminUser,
 	setPublishPermission,
@@ -35,6 +37,8 @@ export function UserManagement({ initialUsers }: UserManagementProps) {
 				},
 			});
 			updateUser(target.id, { approved: !target.approved });
+		} catch (error) {
+			toast.error(getErrorMessage(error));
 		} finally {
 			setBusyId(null);
 		}
@@ -49,6 +53,8 @@ export function UserManagement({ initialUsers }: UserManagementProps) {
 		try {
 			await setUserRole({ data: { userId: target.id, role } });
 			updateUser(target.id, { role });
+		} catch (error) {
+			toast.error(getErrorMessage(error));
 		} finally {
 			setBusyId(null);
 		}
@@ -65,6 +71,8 @@ export function UserManagement({ initialUsers }: UserManagementProps) {
 				data: { userId: target.id, canPublish: !target.canPublish },
 			});
 			updateUser(target.id, { canPublish: !target.canPublish });
+		} catch (error) {
+			toast.error(getErrorMessage(error));
 		} finally {
 			setBusyId(null);
 		}
