@@ -50,6 +50,13 @@
       "when": 1786704981075,
       "tag": "0006_unusual_bloodstorm",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1786954566651,
+      "tag": "0007_overrated_rictor",
+      "breakpoints": true
     }
   ]
 }

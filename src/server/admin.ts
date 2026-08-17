@@ -14,6 +14,7 @@ export type AdminUser = {
 	email: string;
 	role: string | null;
 	approved: boolean;
+	canPublish: boolean;
 	createdAt: string;
 };
 
@@ -31,6 +32,7 @@ const selectUserRow = {
 	email: user.email,
 	role: user.role,
 	approved: user.approved,
+	canPublish: user.canPublish,
 	createdAt: user.createdAt,
 };
 
@@ -40,6 +42,7 @@ type UserRow = {
 	email: string;
 	role: string | null;
 	approved: boolean;
+	canPublish: boolean;
 	createdAt: Date;
 };
 
@@ -133,6 +136,21 @@ export const setUserRole = createServerFn({
 			},
 			headers: getRequestHeaders(),
 		});
+
+		return { ok: true };
+	});
+
+export const setPublishPermission = createServerFn({
+	method: "POST",
+})
+	.validator((data: { userId: string; canPublish: boolean }) => data)
+	.handler(async ({ data }) => {
+		await requireAdminSession();
+
+		await db
+			.update(user)
+			.set({ canPublish: data.canPublish })
+			.where(eq(user.id, data.userId));
 
 		return { ok: true };
 	});

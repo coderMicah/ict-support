@@ -1,6 +1,11 @@
 import { useState } from "react";
 
-import { type AdminUser, setUserApproval, setUserRole } from "#/server/admin";
+import {
+	type AdminUser,
+	setPublishPermission,
+	setUserApproval,
+	setUserRole,
+} from "#/server/admin";
 
 type UserManagementProps = {
 	initialUsers: AdminUser[];
@@ -49,14 +54,31 @@ export function UserManagement({ initialUsers }: UserManagementProps) {
 		}
 	};
 
+	const onTogglePublish = async (target: AdminUser) => {
+		if (busyId) {
+			return;
+		}
+
+		setBusyId(target.id);
+		try {
+			await setPublishPermission({
+				data: { userId: target.id, canPublish: !target.canPublish },
+			});
+			updateUser(target.id, { canPublish: !target.canPublish });
+		} finally {
+			setBusyId(null);
+		}
+	};
+
 	return (
 		<div className="overflow-x-auto rounded-lg border border-neutral-200 bg-white">
-			<table className="w-full min-w-[680px] text-sm">
+			<table className="w-full min-w-[780px] text-sm">
 				<thead className="border-b border-neutral-200 text-left text-xs uppercase tracking-wider text-neutral-500">
 					<tr>
 						<th className="px-4 py-3 font-medium">Name</th>
 						<th className="px-4 py-3 font-medium">Email</th>
 						<th className="px-4 py-3 font-medium">Role</th>
+						<th className="px-4 py-3 font-medium">Publish</th>
 						<th className="px-4 py-3 font-medium">Status</th>
 						<th className="px-4 py-3 font-medium">Actions</th>
 					</tr>
@@ -81,6 +103,26 @@ export function UserManagement({ initialUsers }: UserManagementProps) {
 									<option value="user">User</option>
 									<option value="admin">Admin</option>
 								</select>
+							</td>
+							<td className="px-4 py-3">
+								{row.role === "admin" ? (
+									<span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700">
+										Always
+									</span>
+								) : (
+									<button
+										type="button"
+										disabled={busyId === row.id}
+										onClick={() => onTogglePublish(row)}
+										className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
+											row.canPublish
+												? "border-green-300 bg-green-50 text-green-700 hover:bg-green-100"
+												: "border-neutral-300 bg-white text-neutral-500 hover:bg-neutral-100"
+										}`}
+									>
+										{row.canPublish ? "Granted" : "Denied"}
+									</button>
+								)}
 							</td>
 							<td className="px-4 py-3">
 								{row.approved ? (

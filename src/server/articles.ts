@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-
+import { can } from "#/lib/access-control";
 import {
 	type ArticleItem,
 	archiveArticleAction,
@@ -17,7 +17,7 @@ import {
 	articleUpdateSchema,
 } from "#/lib/schemas/articles";
 
-import { requirePermission } from "./guard";
+import { requirePermission, requireServerSession } from "./guard";
 
 export const getArticles = createServerFn({
 	method: "GET",
@@ -62,7 +62,15 @@ export const publishArticle = createServerFn({
 })
 	.validator(articleIdSchema)
 	.handler(async ({ data }): Promise<ArticleItem> => {
-		await requirePermission({ articles: ["publish"] });
+		const session = await requireServerSession();
+
+		const hasRolePublish = can(session.user.role, { articles: ["publish"] });
+		const userCanPublish = (session.user as { canPublish?: boolean })
+			.canPublish;
+
+		if (!hasRolePublish && !userCanPublish) {
+			await requirePermission({ articles: ["publish"] });
+		}
 
 		return publishArticleAction(data.id);
 	});

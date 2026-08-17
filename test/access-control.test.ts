@@ -63,3 +63,42 @@ describe("article lifecycle access", () => {
 		expect(can("superuser", { articles: ["view"] })).toBe(false);
 	});
 });
+
+describe("publish permission model", () => {
+	it("admin role always has publish permission via can()", () => {
+		expect(can("admin", { articles: ["publish"] })).toBe(true);
+	});
+
+	it("user role does not have publish permission via can()", () => {
+		expect(can("user", { articles: ["publish"] })).toBe(false);
+	});
+
+	it("admin role has all article lifecycle permissions", () => {
+		expect(
+			can("admin", {
+				articles: ["create", "update", "publish", "archive", "restore", "delete"],
+			}),
+		).toBe(true);
+	});
+
+	it("user role can create and update but not publish", () => {
+		expect(can("user", { articles: ["create"] })).toBe(true);
+		expect(can("user", { articles: ["update"] })).toBe(true);
+		expect(can("user", { articles: ["publish"] })).toBe(false);
+	});
+
+	it("user role can view articles", () => {
+		expect(can("user", { articles: ["view"] })).toBe(true);
+	});
+
+	it("admin can manage categories fully", () => {
+		expect(
+			can("admin", { categories: ["view", "create", "update", "delete"] }),
+		).toBe(true);
+	});
+
+	it("user can only view categories", () => {
+		expect(can("user", { categories: ["view"] })).toBe(true);
+		expect(can("user", { categories: ["create"] })).toBe(false);
+	});
+});

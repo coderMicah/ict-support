@@ -32,7 +32,9 @@ function ArticlesPage() {
 	const { articles, user } = Route.useLoaderData();
 	const router = useRouter();
 
-	const canPublish = can(user.role, { articles: ["publish"] });
+	const canPublish =
+		can(user.role, { articles: ["publish"] }) ||
+		(user as { canPublish?: boolean }).canPublish === true;
 	const canArchive = can(user.role, { articles: ["archive"] });
 	const canRestore = can(user.role, { articles: ["restore"] });
 	const canDelete = can(user.role, { articles: ["delete"] });

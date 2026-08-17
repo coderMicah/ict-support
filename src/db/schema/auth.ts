@@ -15,6 +15,8 @@ export const user = pgTable("user", {
 	banExpires: timestamp("ban_expires"),
 	// Approval field
 	approved: boolean("approved").notNull().default(false),
+	// Per-user publish permission
+	canPublish: boolean("can_publish").notNull().default(false),
 });
 
 export const session = pgTable(
