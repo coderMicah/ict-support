@@ -19,9 +19,10 @@ export async function requireServerSession(): Promise<
 	}
 
 	// Better Auth returns banned/banExpires at runtime but doesn't expose them in its types.
-	const { banned, banExpires } = session.user as Record<string, unknown>;
-	if (banned) {
-		const expires = banExpires != null ? new Date(banExpires as string) : null;
+	const user = session.user as Record<string, unknown>;
+	if (user.banned) {
+		const expires =
+			user.banExpires != null ? new Date(user.banExpires as string) : null;
 		if (!expires || expires > new Date()) {
 			throw new ForbiddenError("Your account has been suspended.");
 		}

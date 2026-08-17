@@ -16,6 +16,7 @@ import {
 	articleInputSchema,
 	articleUpdateSchema,
 } from "#/lib/schemas/articles";
+import type { PortalUser } from "#/lib/types";
 
 import { requirePermission, requireServerSession } from "./guard";
 
@@ -65,8 +66,8 @@ export const publishArticle = createServerFn({
 		const session = await requireServerSession();
 
 		const hasRolePublish = can(session.user.role, { articles: ["publish"] });
-		const userCanPublish = (session.user as { canPublish?: boolean })
-			.canPublish;
+		const user = session.user as PortalUser;
+		const userCanPublish = user.canPublish === true;
 
 		if (!hasRolePublish && !userCanPublish) {
 			await requirePermission({ articles: ["publish"] });
