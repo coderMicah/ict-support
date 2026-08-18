@@ -379,7 +379,6 @@ describe("public-vs-internal boundary", () => {
 			"/documents/new",
 			"/contacts",
 			"/admin",
-			"/admin/categories",
 		])("%s redirects to /sign-in", async (routePath) => {
 			const response = await fetch(`${baseUrl}${routePath}`, {
 				redirect: "manual",
@@ -414,7 +413,7 @@ describe("public-vs-internal boundary", () => {
 				headers: { Cookie: jar.header() },
 			});
 			expect(page.status).toBe(200);
-			expect(await page.text()).toContain("Administration");
+			expect(await page.text()).toContain("User Management");
 
 			const list = await fetch(`${baseUrl}/api/auth/admin/list-users`, {
 				headers: { Cookie: jar.header() },

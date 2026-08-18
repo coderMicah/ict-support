@@ -21,10 +21,8 @@ import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
 import { Route as authSignOutRouteImport } from './routes/(auth)/sign-out'
 import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
 import { Route as protectedAdminRouteRouteImport } from './routes/(protected)/admin/route'
-import { Route as protectedArticlesRouteRouteImport } from './routes/(protected)/articles/route'
 import { Route as protectedCategoriesRouteImport } from './routes/(protected)/categories'
 import { Route as protectedDashboardRouteImport } from './routes/(protected)/dashboard'
-import { Route as protectedDocumentsRouteRouteImport } from './routes/(protected)/documents/route'
 import { Route as DownloadsIndexRouteImport } from './routes/downloads/index'
 import { Route as KbIndexRouteImport } from './routes/kb/index'
 import { Route as KbCategorySlugRouteImport } from './routes/kb/$categorySlug'
@@ -32,7 +30,6 @@ import { Route as SearchIndexRouteImport } from './routes/search/index'
 import { Route as StaffContactsIndexRouteImport } from './routes/staff-contacts/index'
 import { Route as UploadsKeyRouteImport } from './routes/uploads/$key'
 import { Route as protectedAdminIndexRouteImport } from './routes/(protected)/admin/index'
-import { Route as protectedAdminCategoriesRouteImport } from './routes/(protected)/admin/categories'
 import { Route as protectedArticlesIndexRouteImport } from './routes/(protected)/articles/index'
 import { Route as protectedArticlesNewRouteImport } from './routes/(protected)/articles/new'
 import { Route as protectedContactsIndexRouteImport } from './routes/(protected)/contacts/index'
@@ -102,11 +99,6 @@ const protectedAdminRouteRoute = protectedAdminRouteRouteImport.update({
   path: '/admin',
   getParentRoute: () => protectedRouteRoute,
 } as any)
-const protectedArticlesRouteRoute = protectedArticlesRouteRouteImport.update({
-  id: '/articles',
-  path: '/articles',
-  getParentRoute: () => protectedRouteRoute,
-} as any)
 const protectedCategoriesRoute = protectedCategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
@@ -115,11 +107,6 @@ const protectedCategoriesRoute = protectedCategoriesRouteImport.update({
 const protectedDashboardRoute = protectedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
-  getParentRoute: () => protectedRouteRoute,
-} as any)
-const protectedDocumentsRouteRoute = protectedDocumentsRouteRouteImport.update({
-  id: '/documents',
-  path: '/documents',
   getParentRoute: () => protectedRouteRoute,
 } as any)
 const DownloadsIndexRoute = DownloadsIndexRouteImport.update({
@@ -157,21 +144,15 @@ const protectedAdminIndexRoute = protectedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => protectedAdminRouteRoute,
 } as any)
-const protectedAdminCategoriesRoute =
-  protectedAdminCategoriesRouteImport.update({
-    id: '/categories',
-    path: '/categories',
-    getParentRoute: () => protectedAdminRouteRoute,
-  } as any)
 const protectedArticlesIndexRoute = protectedArticlesIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => protectedArticlesRouteRoute,
+  id: '/articles/',
+  path: '/articles/',
+  getParentRoute: () => protectedRouteRoute,
 } as any)
 const protectedArticlesNewRoute = protectedArticlesNewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => protectedArticlesRouteRoute,
+  id: '/articles/new',
+  path: '/articles/new',
+  getParentRoute: () => protectedRouteRoute,
 } as any)
 const protectedContactsIndexRoute = protectedContactsIndexRouteImport.update({
   id: '/contacts/',
@@ -179,14 +160,14 @@ const protectedContactsIndexRoute = protectedContactsIndexRouteImport.update({
   getParentRoute: () => protectedRouteRoute,
 } as any)
 const protectedDocumentsIndexRoute = protectedDocumentsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => protectedDocumentsRouteRoute,
+  id: '/documents/',
+  path: '/documents/',
+  getParentRoute: () => protectedRouteRoute,
 } as any)
 const protectedDocumentsNewRoute = protectedDocumentsNewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => protectedDocumentsRouteRoute,
+  id: '/documents/new',
+  path: '/documents/new',
+  getParentRoute: () => protectedRouteRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
@@ -206,15 +187,15 @@ const UploadsDocumentsKeyRoute = UploadsDocumentsKeyRouteImport.update({
 } as any)
 const protectedArticlesArticleIdEditRoute =
   protectedArticlesArticleIdEditRouteImport.update({
-    id: '/$articleId/edit',
-    path: '/$articleId/edit',
-    getParentRoute: () => protectedArticlesRouteRoute,
+    id: '/articles/$articleId/edit',
+    path: '/articles/$articleId/edit',
+    getParentRoute: () => protectedRouteRoute,
   } as any)
 const protectedDocumentsDocumentIdEditRoute =
   protectedDocumentsDocumentIdEditRouteImport.update({
-    id: '/$documentId/edit',
-    path: '/$documentId/edit',
-    getParentRoute: () => protectedDocumentsRouteRoute,
+    id: '/documents/$documentId/edit',
+    path: '/documents/$documentId/edit',
+    getParentRoute: () => protectedRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -225,8 +206,6 @@ export interface FileRoutesByFullPath {
   '/staff-contacts': typeof StaffContactsRouteRouteWithChildren
   '/pending-approval': typeof PendingApprovalRoute
   '/admin': typeof protectedAdminRouteRouteWithChildren
-  '/articles': typeof protectedArticlesRouteRouteWithChildren
-  '/documents': typeof protectedDocumentsRouteRouteWithChildren
   '/sign-in': typeof authSignInRoute
   '/sign-out': typeof authSignOutRoute
   '/sign-up': typeof authSignUpRoute
@@ -238,7 +217,6 @@ export interface FileRoutesByFullPath {
   '/kb/': typeof KbIndexRoute
   '/search/': typeof SearchIndexRoute
   '/staff-contacts/': typeof StaffContactsIndexRoute
-  '/admin/categories': typeof protectedAdminCategoriesRoute
   '/articles/new': typeof protectedArticlesNewRoute
   '/documents/new': typeof protectedDocumentsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -265,7 +243,6 @@ export interface FileRoutesByTo {
   '/kb': typeof KbIndexRoute
   '/search': typeof SearchIndexRoute
   '/staff-contacts': typeof StaffContactsIndexRoute
-  '/admin/categories': typeof protectedAdminCategoriesRoute
   '/articles/new': typeof protectedArticlesNewRoute
   '/documents/new': typeof protectedDocumentsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -289,8 +266,6 @@ export interface FileRoutesById {
   '/staff-contacts': typeof StaffContactsRouteRouteWithChildren
   '/pending-approval': typeof PendingApprovalRoute
   '/(protected)/admin': typeof protectedAdminRouteRouteWithChildren
-  '/(protected)/articles': typeof protectedArticlesRouteRouteWithChildren
-  '/(protected)/documents': typeof protectedDocumentsRouteRouteWithChildren
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-out': typeof authSignOutRoute
   '/(auth)/sign-up': typeof authSignUpRoute
@@ -302,7 +277,6 @@ export interface FileRoutesById {
   '/kb/': typeof KbIndexRoute
   '/search/': typeof SearchIndexRoute
   '/staff-contacts/': typeof StaffContactsIndexRoute
-  '/(protected)/admin/categories': typeof protectedAdminCategoriesRoute
   '/(protected)/articles/new': typeof protectedArticlesNewRoute
   '/(protected)/documents/new': typeof protectedDocumentsNewRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -325,8 +299,6 @@ export interface FileRouteTypes {
     | '/staff-contacts'
     | '/pending-approval'
     | '/admin'
-    | '/articles'
-    | '/documents'
     | '/sign-in'
     | '/sign-out'
     | '/sign-up'
@@ -338,7 +310,6 @@ export interface FileRouteTypes {
     | '/kb/'
     | '/search/'
     | '/staff-contacts/'
-    | '/admin/categories'
     | '/articles/new'
     | '/documents/new'
     | '/api/auth/$'
@@ -365,7 +336,6 @@ export interface FileRouteTypes {
     | '/kb'
     | '/search'
     | '/staff-contacts'
-    | '/admin/categories'
     | '/articles/new'
     | '/documents/new'
     | '/api/auth/$'
@@ -388,8 +358,6 @@ export interface FileRouteTypes {
     | '/staff-contacts'
     | '/pending-approval'
     | '/(protected)/admin'
-    | '/(protected)/articles'
-    | '/(protected)/documents'
     | '/(auth)/sign-in'
     | '/(auth)/sign-out'
     | '/(auth)/sign-up'
@@ -401,7 +369,6 @@ export interface FileRouteTypes {
     | '/kb/'
     | '/search/'
     | '/staff-contacts/'
-    | '/(protected)/admin/categories'
     | '/(protected)/articles/new'
     | '/(protected)/documents/new'
     | '/api/auth/$'
@@ -515,13 +482,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedAdminRouteRouteImport
       parentRoute: typeof protectedRouteRoute
     }
-    '/(protected)/articles': {
-      id: '/(protected)/articles'
-      path: '/articles'
-      fullPath: '/articles'
-      preLoaderRoute: typeof protectedArticlesRouteRouteImport
-      parentRoute: typeof protectedRouteRoute
-    }
     '/(protected)/categories': {
       id: '/(protected)/categories'
       path: '/categories'
@@ -534,13 +494,6 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof protectedDashboardRouteImport
-      parentRoute: typeof protectedRouteRoute
-    }
-    '/(protected)/documents': {
-      id: '/(protected)/documents'
-      path: '/documents'
-      fullPath: '/documents'
-      preLoaderRoute: typeof protectedDocumentsRouteRouteImport
       parentRoute: typeof protectedRouteRoute
     }
     '/downloads/': {
@@ -592,26 +545,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof protectedAdminIndexRouteImport
       parentRoute: typeof protectedAdminRouteRoute
     }
-    '/(protected)/admin/categories': {
-      id: '/(protected)/admin/categories'
-      path: '/categories'
-      fullPath: '/admin/categories'
-      preLoaderRoute: typeof protectedAdminCategoriesRouteImport
-      parentRoute: typeof protectedAdminRouteRoute
-    }
     '/(protected)/articles/': {
       id: '/(protected)/articles/'
-      path: '/'
+      path: '/articles'
       fullPath: '/articles/'
       preLoaderRoute: typeof protectedArticlesIndexRouteImport
-      parentRoute: typeof protectedArticlesRouteRoute
+      parentRoute: typeof protectedRouteRoute
     }
     '/(protected)/articles/new': {
       id: '/(protected)/articles/new'
-      path: '/new'
+      path: '/articles/new'
       fullPath: '/articles/new'
       preLoaderRoute: typeof protectedArticlesNewRouteImport
-      parentRoute: typeof protectedArticlesRouteRoute
+      parentRoute: typeof protectedRouteRoute
     }
     '/(protected)/contacts/': {
       id: '/(protected)/contacts/'
@@ -622,17 +568,17 @@ declare module '@tanstack/react-router' {
     }
     '/(protected)/documents/': {
       id: '/(protected)/documents/'
-      path: '/'
+      path: '/documents'
       fullPath: '/documents/'
       preLoaderRoute: typeof protectedDocumentsIndexRouteImport
-      parentRoute: typeof protectedDocumentsRouteRoute
+      parentRoute: typeof protectedRouteRoute
     }
     '/(protected)/documents/new': {
       id: '/(protected)/documents/new'
-      path: '/new'
+      path: '/documents/new'
       fullPath: '/documents/new'
       preLoaderRoute: typeof protectedDocumentsNewRouteImport
-      parentRoute: typeof protectedDocumentsRouteRoute
+      parentRoute: typeof protectedRouteRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -657,17 +603,17 @@ declare module '@tanstack/react-router' {
     }
     '/(protected)/articles/$articleId/edit': {
       id: '/(protected)/articles/$articleId/edit'
-      path: '/$articleId/edit'
+      path: '/articles/$articleId/edit'
       fullPath: '/articles/$articleId/edit'
       preLoaderRoute: typeof protectedArticlesArticleIdEditRouteImport
-      parentRoute: typeof protectedArticlesRouteRoute
+      parentRoute: typeof protectedRouteRoute
     }
     '/(protected)/documents/$documentId/edit': {
       id: '/(protected)/documents/$documentId/edit'
-      path: '/$documentId/edit'
+      path: '/documents/$documentId/edit'
       fullPath: '/documents/$documentId/edit'
       preLoaderRoute: typeof protectedDocumentsDocumentIdEditRouteImport
-      parentRoute: typeof protectedDocumentsRouteRoute
+      parentRoute: typeof protectedRouteRoute
     }
   }
 }
@@ -689,71 +635,40 @@ const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
 )
 
 interface protectedAdminRouteRouteChildren {
-  protectedAdminCategoriesRoute: typeof protectedAdminCategoriesRoute
   protectedAdminIndexRoute: typeof protectedAdminIndexRoute
 }
 
 const protectedAdminRouteRouteChildren: protectedAdminRouteRouteChildren = {
-  protectedAdminCategoriesRoute: protectedAdminCategoriesRoute,
   protectedAdminIndexRoute: protectedAdminIndexRoute,
 }
 
 const protectedAdminRouteRouteWithChildren =
   protectedAdminRouteRoute._addFileChildren(protectedAdminRouteRouteChildren)
 
-interface protectedArticlesRouteRouteChildren {
-  protectedArticlesNewRoute: typeof protectedArticlesNewRoute
-  protectedArticlesIndexRoute: typeof protectedArticlesIndexRoute
-  protectedArticlesArticleIdEditRoute: typeof protectedArticlesArticleIdEditRoute
-}
-
-const protectedArticlesRouteRouteChildren: protectedArticlesRouteRouteChildren =
-  {
-    protectedArticlesNewRoute: protectedArticlesNewRoute,
-    protectedArticlesIndexRoute: protectedArticlesIndexRoute,
-    protectedArticlesArticleIdEditRoute: protectedArticlesArticleIdEditRoute,
-  }
-
-const protectedArticlesRouteRouteWithChildren =
-  protectedArticlesRouteRoute._addFileChildren(
-    protectedArticlesRouteRouteChildren,
-  )
-
-interface protectedDocumentsRouteRouteChildren {
-  protectedDocumentsNewRoute: typeof protectedDocumentsNewRoute
-  protectedDocumentsIndexRoute: typeof protectedDocumentsIndexRoute
-  protectedDocumentsDocumentIdEditRoute: typeof protectedDocumentsDocumentIdEditRoute
-}
-
-const protectedDocumentsRouteRouteChildren: protectedDocumentsRouteRouteChildren =
-  {
-    protectedDocumentsNewRoute: protectedDocumentsNewRoute,
-    protectedDocumentsIndexRoute: protectedDocumentsIndexRoute,
-    protectedDocumentsDocumentIdEditRoute:
-      protectedDocumentsDocumentIdEditRoute,
-  }
-
-const protectedDocumentsRouteRouteWithChildren =
-  protectedDocumentsRouteRoute._addFileChildren(
-    protectedDocumentsRouteRouteChildren,
-  )
-
 interface protectedRouteRouteChildren {
   protectedAdminRouteRoute: typeof protectedAdminRouteRouteWithChildren
-  protectedArticlesRouteRoute: typeof protectedArticlesRouteRouteWithChildren
-  protectedDocumentsRouteRoute: typeof protectedDocumentsRouteRouteWithChildren
   protectedCategoriesRoute: typeof protectedCategoriesRoute
   protectedDashboardRoute: typeof protectedDashboardRoute
+  protectedArticlesNewRoute: typeof protectedArticlesNewRoute
+  protectedDocumentsNewRoute: typeof protectedDocumentsNewRoute
+  protectedArticlesIndexRoute: typeof protectedArticlesIndexRoute
   protectedContactsIndexRoute: typeof protectedContactsIndexRoute
+  protectedDocumentsIndexRoute: typeof protectedDocumentsIndexRoute
+  protectedArticlesArticleIdEditRoute: typeof protectedArticlesArticleIdEditRoute
+  protectedDocumentsDocumentIdEditRoute: typeof protectedDocumentsDocumentIdEditRoute
 }
 
 const protectedRouteRouteChildren: protectedRouteRouteChildren = {
   protectedAdminRouteRoute: protectedAdminRouteRouteWithChildren,
-  protectedArticlesRouteRoute: protectedArticlesRouteRouteWithChildren,
-  protectedDocumentsRouteRoute: protectedDocumentsRouteRouteWithChildren,
   protectedCategoriesRoute: protectedCategoriesRoute,
   protectedDashboardRoute: protectedDashboardRoute,
+  protectedArticlesNewRoute: protectedArticlesNewRoute,
+  protectedDocumentsNewRoute: protectedDocumentsNewRoute,
+  protectedArticlesIndexRoute: protectedArticlesIndexRoute,
   protectedContactsIndexRoute: protectedContactsIndexRoute,
+  protectedDocumentsIndexRoute: protectedDocumentsIndexRoute,
+  protectedArticlesArticleIdEditRoute: protectedArticlesArticleIdEditRoute,
+  protectedDocumentsDocumentIdEditRoute: protectedDocumentsDocumentIdEditRoute,
 }
 
 const protectedRouteRouteWithChildren = protectedRouteRoute._addFileChildren(

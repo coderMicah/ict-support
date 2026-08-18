@@ -1,25 +1,35 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { CategoryManagement } from "#/components/admin/category-management";
+import { can } from "#/lib/access-control";
 import { getCategories } from "#/server/categories";
 
 export const Route = createFileRoute("/(protected)/categories")({
-	loader: () => getCategories(),
+	loader: async ({ context }) => ({
+		categories: await getCategories(),
+		user: context.user,
+	}),
 	component: CategoriesPage,
 });
 
 function CategoriesPage() {
-	const categories = Route.useLoaderData();
+	const { categories, user } = Route.useLoaderData();
+	const canManage = can(user.role, { categories: ["create"] });
 
 	return (
 		<div className="space-y-6">
 			<div>
-				<h1 className="text-2xl font-bold tracking-tight">Knowledge Base</h1>
+				<h1 className="text-2xl font-bold tracking-tight">Categories</h1>
 				<p className="mt-1 text-sm text-neutral-500">
-					Browse ICT knowledge base content by category.
+					{canManage
+						? "Create and manage knowledge base categories."
+						: "Browse ICT knowledge base content by category."}
 				</p>
 			</div>
 
-			{categories.length === 0 ? (
+			{canManage ? (
+				<CategoryManagement initialCategories={categories} />
+			) : categories.length === 0 ? (
 				<div className="rounded-lg border border-neutral-200 bg-white p-8 text-center">
 					<p className="text-sm text-neutral-500">
 						No categories yet. Check back soon.
