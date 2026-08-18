@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
+import { Link, Outlet, useNavigate } from "@tanstack/react-router";
 
 const mainNavItems = [
 	{ to: "/dashboard", label: "Dashboard" },
@@ -7,6 +7,10 @@ const mainNavItems = [
 	{ to: "/contacts/manage", label: "Contacts" },
 	{ to: "/categories", label: "Categories" },
 ];
+
+const baseClass =
+	"flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900";
+const activeClass = "bg-neutral-200/70 text-neutral-900";
 
 type PortalShellProps = {
 	user: {
@@ -17,11 +21,7 @@ type PortalShellProps = {
 };
 
 export function PortalShell({ user }: PortalShellProps) {
-	const { pathname } = useLocation();
 	const navigate = useNavigate();
-
-	const isActive = (to: string) =>
-		pathname === to || pathname.startsWith(`${to}/`);
 
 	const signOut = () => {
 		void navigate({ to: "/sign-out" });
@@ -31,11 +31,9 @@ export function PortalShell({ user }: PortalShellProps) {
 		<Link
 			key={item.to}
 			to={item.to}
-			className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-				isActive(item.to)
-					? "bg-neutral-200/70 text-neutral-900"
-					: "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
-			}`}
+			activeOptions={{ exact: true }}
+			activeProps={{ className: activeClass }}
+			className={baseClass}
 		>
 			{item.label}
 		</Link>
@@ -93,11 +91,9 @@ export function PortalShell({ user }: PortalShellProps) {
 						<Link
 							key={item.to}
 							to={item.to}
-							className={`flex shrink-0 items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-								isActive(item.to)
-									? "bg-neutral-200/70 text-neutral-900"
-									: "text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
-							}`}
+							activeOptions={{ exact: true }}
+							activeProps={{ className: activeClass }}
+							className="flex shrink-0 items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-colors text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
 						>
 							{item.label}
 						</Link>
