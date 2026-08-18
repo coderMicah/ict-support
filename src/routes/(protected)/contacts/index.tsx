@@ -9,7 +9,7 @@ const contactsSearchSchema = z.object({
 	q: z.string().trim().max(200).optional(),
 });
 
-export const Route = createFileRoute("/(protected)/contacts/manage")({
+export const Route = createFileRoute("/(protected)/contacts/")({
 	validateSearch: (search) => contactsSearchSchema.parse(search),
 	loader: async ({ context }) => ({
 		contacts: await getContacts(),

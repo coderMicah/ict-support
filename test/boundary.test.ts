@@ -353,7 +353,7 @@ describe("public-vs-internal boundary", () => {
 		});
 
 		it("contacts lists active contacts only", async () => {
-			const html = await fetchText(`${baseUrl}/contacts`);
+			const html = await fetchText(`${baseUrl}/staff-contacts`);
 			expect(html).toContain("Boundary Active Contact");
 			expect(html).not.toContain("Boundary Inactive Contact");
 		});
@@ -377,7 +377,7 @@ describe("public-vs-internal boundary", () => {
 			"/articles/new",
 			"/documents",
 			"/documents/new",
-			"/contacts/manage",
+			"/contacts",
 			"/admin",
 			"/admin/categories",
 		])("%s redirects to /sign-in", async (routePath) => {

@@ -40,7 +40,7 @@ export function KnowledgeBaseShell({ children }: { children?: ReactNode }) {
 							Downloads
 						</Link>
 						<Link
-							to="/contacts"
+							to="/staff-contacts"
 							className="rounded-md px-3 py-1.5 text-sm font-medium text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
 						>
 							Contacts

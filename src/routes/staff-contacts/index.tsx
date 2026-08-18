@@ -3,7 +3,7 @@ import { Mail, Phone } from "lucide-react";
 
 import { getPublicContacts } from "#/server/public";
 
-export const Route = createFileRoute("/contacts/")({
+export const Route = createFileRoute("/staff-contacts/")({
 	loader: () => getPublicContacts(),
 	head: () => ({
 		meta: [
