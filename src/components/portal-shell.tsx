@@ -5,7 +5,7 @@ const mainNavItems = [
 	{ to: "/articles", label: "Articles" },
 	{ to: "/documents", label: "Documents" },
 	{ to: "/contacts/manage", label: "Contacts" },
-	{ to: "/categories", label: "Knowledge Base" },
+	{ to: "/categories", label: "Categories" },
 ];
 
 type PortalShellProps = {
