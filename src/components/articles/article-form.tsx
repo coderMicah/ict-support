@@ -1,9 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@tanstack/react-router";
-import { useRef, useState } from "react";
+import { lazy, Suspense, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { RichTextEditor } from "#/components/editor/rich-text-editor";
 import { FormField } from "#/components/form-field";
 import type { ArticleItem } from "#/lib/articles";
 import type { CategoryItem } from "#/lib/categories";
@@ -13,6 +12,12 @@ import { type ArticleInput, articleInputSchema } from "#/lib/schemas/articles";
 import { slugify } from "#/lib/schemas/categories";
 import { inputClass } from "#/lib/utils";
 import { createArticle, updateArticle } from "#/server/articles";
+
+const RichTextEditor = lazy(() =>
+	import("#/components/editor/rich-text-editor").then((m) => ({
+		default: m.RichTextEditor,
+	})),
+);
 
 const excerptLength = 160;
 
@@ -151,11 +156,19 @@ export function ArticleForm({ mode, initial, categories }: ArticleFormProps) {
 				<span className="mb-1 block text-sm font-medium text-neutral-700">
 					Body
 				</span>
-				<RichTextEditor
-					key={initial?.id ?? "new"}
-					initialBody={initial?.body ?? ""}
-					onChange={onBodyChange}
-				/>
+				<Suspense
+					fallback={
+						<div className="min-h-[300px] rounded-md border border-neutral-300 bg-white p-4 text-sm text-neutral-400">
+							Loading editor…
+						</div>
+					}
+				>
+					<RichTextEditor
+						key={initial?.id ?? "new"}
+						initialBody={initial?.body ?? ""}
+						onChange={onBodyChange}
+					/>
+				</Suspense>
 				{errors.body && (
 					<span className="mt-1 block text-xs text-red-600">
 						{errors.body.message}

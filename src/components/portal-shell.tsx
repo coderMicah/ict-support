@@ -1,18 +1,11 @@
 import { Link, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 
-import { can } from "#/lib/access-control";
-
 const mainNavItems = [
 	{ to: "/dashboard", label: "Dashboard" },
 	{ to: "/articles", label: "Articles" },
 	{ to: "/documents", label: "Documents" },
 	{ to: "/contacts/manage", label: "Contacts" },
 	{ to: "/categories", label: "Knowledge Base" },
-];
-
-const adminNavItems = [
-	{ to: "/admin", label: "Administration" },
-	{ to: "/admin/categories", label: "Categories" },
 ];
 
 type PortalShellProps = {
@@ -33,11 +26,6 @@ export function PortalShell({ user }: PortalShellProps) {
 	const signOut = () => {
 		void navigate({ to: "/sign-out" });
 	};
-
-	const adminVisible = can(user.role, { user: ["list"] });
-	const navTargets = adminVisible
-		? [...mainNavItems, ...adminNavItems]
-		: mainNavItems;
 
 	const renderNavItem = (item: (typeof mainNavItems)[number]) => (
 		<Link
@@ -63,7 +51,7 @@ export function PortalShell({ user }: PortalShellProps) {
 				</div>
 
 				<nav className="flex-1 space-y-0.5 p-3">
-					{navTargets.map(renderNavItem)}
+					{mainNavItems.map(renderNavItem)}
 				</nav>
 
 				<div className="border-t border-neutral-200 p-3">
@@ -101,7 +89,7 @@ export function PortalShell({ user }: PortalShellProps) {
 				</header>
 
 				<nav className="flex items-center gap-1 overflow-x-auto border-b border-neutral-200 bg-white px-4 py-2">
-					{navTargets.map((item) => (
+					{mainNavItems.map((item) => (
 						<Link
 							key={item.to}
 							to={item.to}
