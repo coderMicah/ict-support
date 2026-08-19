@@ -1,7 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
 
-import { requireServerSession } from "./guard";
-
 export type PortalOverview = {
 	user: {
 		id: string;
@@ -14,6 +12,7 @@ export type PortalOverview = {
 export const getPortalOverview = createServerFn({
 	method: "GET",
 }).handler(async (): Promise<PortalOverview> => {
+	const { requireServerSession } = await import("./guard");
 	const session = await requireServerSession();
 
 	return {
