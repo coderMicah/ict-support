@@ -10,10 +10,7 @@ export const Route = createFileRoute("/")({
 	beforeLoad: ({ context }) => {
 		if (context.session) {
 			throw redirect({
-				to:
-					context.session.user.approved === false
-						? "/pending-approval"
-						: "/dashboard",
+				to: "/dashboard",
 			});
 		}
 	},

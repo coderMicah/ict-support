@@ -5,11 +5,7 @@ import { desc, eq } from "drizzle-orm";
 import { db } from "#/db";
 import { user } from "#/db/schema";
 import { auth } from "#/lib/auth";
-import {
-	setPublishPermissionSchema,
-	setUserApprovalSchema,
-	setUserRoleSchema,
-} from "#/lib/schemas/admin";
+import { setUserRoleSchema } from "#/lib/schemas/admin";
 
 import { requireAdminRole } from "./guard";
 
@@ -18,8 +14,6 @@ export type AdminUser = {
 	name: string;
 	email: string;
 	role: string | null;
-	approved: boolean;
-	canPublish: boolean;
 	createdAt: string;
 };
 
@@ -27,7 +21,6 @@ export type AdminStats = {
 	totalUsers: number;
 	adminCount: number;
 	userCount: number;
-	pendingCount: number;
 	recentUsers: AdminUser[];
 };
 
@@ -36,8 +29,6 @@ const selectUserRow = {
 	name: user.name,
 	email: user.email,
 	role: user.role,
-	approved: user.approved,
-	canPublish: user.canPublish,
 	createdAt: user.createdAt,
 };
 
@@ -46,8 +37,6 @@ type UserRow = {
 	name: string;
 	email: string;
 	role: string | null;
-	approved: boolean;
-	canPublish: boolean;
 	createdAt: Date;
 };
 
@@ -64,7 +53,6 @@ export const getAdminStats = createServerFn({
 	const totalUsers = await db.$count(user);
 	const adminCount = await db.$count(user, eq(user.role, "admin"));
 	const userCount = await db.$count(user, eq(user.role, "user"));
-	const pendingCount = await db.$count(user, eq(user.approved, false));
 
 	const recentUsers = await db
 		.select(selectUserRow)
@@ -76,7 +64,6 @@ export const getAdminStats = createServerFn({
 		totalUsers,
 		adminCount,
 		userCount,
-		pendingCount,
 		recentUsers: recentUsers.map(toAdminUser),
 	};
 });
@@ -93,35 +80,6 @@ export const getAdminUsers = createServerFn({
 
 	return rows.map(toAdminUser);
 });
-
-export const setUserApproval = createServerFn({
-	method: "POST",
-})
-	.validator(setUserApprovalSchema)
-	.handler(async ({ data }) => {
-		const session = await requireAdminRole();
-
-		if (session.user.id === data.userId) {
-			return { ok: true };
-		}
-
-		await auth.api.adminUpdateUser({
-			body: {
-				userId: data.userId,
-				data: { approved: data.approved },
-			},
-			headers: getRequestHeaders(),
-		});
-
-		if (!data.approved) {
-			await auth.api.revokeUserSessions({
-				body: { userId: data.userId },
-				headers: getRequestHeaders(),
-			});
-		}
-
-		return { ok: true };
-	});
 
 export const setUserRole = createServerFn({
 	method: "POST",
@@ -141,21 +99,6 @@ export const setUserRole = createServerFn({
 			},
 			headers: getRequestHeaders(),
 		});
-
-		return { ok: true };
-	});
-
-export const setPublishPermission = createServerFn({
-	method: "POST",
-})
-	.validator(setPublishPermissionSchema)
-	.handler(async ({ data }) => {
-		await requireAdminRole();
-
-		await db
-			.update(user)
-			.set({ canPublish: data.canPublish })
-			.where(eq(user.id, data.userId));
 
 		return { ok: true };
 	});

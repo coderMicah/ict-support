@@ -13,10 +13,6 @@ export const user = pgTable("user", {
 	banned: boolean("banned").default(false),
 	banReason: text("ban_reason"),
 	banExpires: timestamp("ban_expires"),
-	// Approval field
-	approved: boolean("approved").notNull().default(false),
-	// Per-user publish permission
-	canPublish: boolean("can_publish").notNull().default(false),
 });
 
 export const session = pgTable(

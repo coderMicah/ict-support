@@ -142,7 +142,6 @@ async function createUser(
 		email,
 		emailVerified: true,
 		role,
-		approved: true,
 	});
 	await db.insert(account).values({
 		id: randomBytes(16).toString("hex"),

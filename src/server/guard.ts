@@ -1,21 +1,14 @@
 import { can, type Permission } from "#/lib/access-control";
-import { getServerSession, type ServerSession } from "#/lib/auth-functions";
+import { getSession } from "#/lib/auth-functions";
 import { ForbiddenError, UnauthorizedError } from "#/lib/errors";
 
-export type { ServerSession };
-export { getServerSession } from "#/lib/auth-functions";
+type Session = Awaited<ReturnType<typeof getSession>>;
 
-export async function requireServerSession(): Promise<
-	NonNullable<ServerSession>
-> {
-	const session = await getServerSession();
+export async function requireServerSession(): Promise<NonNullable<Session>> {
+	const session = await getSession();
 
 	if (!session) {
 		throw new UnauthorizedError();
-	}
-
-	if (session.user.approved === false) {
-		throw new ForbiddenError("Your account is pending admin approval.");
 	}
 
 	// Better Auth returns banned/banExpires at runtime but doesn't expose them in its types.
@@ -33,7 +26,7 @@ export async function requireServerSession(): Promise<
 
 export async function requirePermission(
 	permission: Permission,
-): Promise<NonNullable<ServerSession>> {
+): Promise<NonNullable<Session>> {
 	const session = await requireServerSession();
 
 	if (!can(session.user.role, permission)) {
@@ -43,6 +36,6 @@ export async function requirePermission(
 	return session;
 }
 
-export async function requireAdminRole(): Promise<NonNullable<ServerSession>> {
+export async function requireAdminRole(): Promise<NonNullable<Session>> {
 	return requirePermission({ user: ["list"] });
 }

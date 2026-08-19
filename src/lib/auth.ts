@@ -13,23 +13,6 @@ export const auth = betterAuth({
 		schema,
 	}),
 
-	user: {
-		additionalFields: {
-			approved: {
-				type: "boolean",
-				required: false,
-				input: false,
-				defaultValue: false,
-			},
-			canPublish: {
-				type: "boolean",
-				required: false,
-				input: false,
-				defaultValue: false,
-			},
-		},
-	},
-
 	emailAndPassword: {
 		enabled: true,
 		autoSignIn: false,
@@ -59,33 +42,6 @@ export const auth = betterAuth({
 								message: "Password must contain a number.",
 							});
 						}
-					}
-				},
-			},
-		},
-		session: {
-			create: {
-				before: async (session, context) => {
-					if (!context) {
-						return;
-					}
-
-					const user = (await context.context.internalAdapter.findUserById(
-						session.userId,
-					)) as { id: string; approved?: boolean; banned?: boolean } | null;
-
-					if (user && user.approved === false) {
-						throw new APIError("FORBIDDEN", {
-							code: "ACCOUNT_PENDING_APPROVAL",
-							message: "Your account is pending admin approval.",
-						});
-					}
-
-					if (user?.banned) {
-						throw new APIError("FORBIDDEN", {
-							code: "ACCOUNT_SUSPENDED",
-							message: "Your account has been suspended.",
-						});
 					}
 				},
 			},

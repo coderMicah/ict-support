@@ -23,22 +23,16 @@ function AdminPage() {
 			<div>
 				<h1 className="text-2xl font-bold tracking-tight">User Management</h1>
 				<p className="mt-1 text-sm text-neutral-500">
-					Manage user accounts and approvals.
+					Manage user accounts and roles.
 				</p>
 			</div>
 
-			<div className="grid gap-4 sm:grid-cols-4">
+			<div className="grid gap-4 sm:grid-cols-3">
 				<div className="rounded-lg border border-neutral-200 bg-white p-5">
 					<p className="text-xs uppercase tracking-wider text-neutral-500">
 						Total users
 					</p>
 					<p className="mt-1 text-2xl font-bold">{stats.totalUsers}</p>
-				</div>
-				<div className="rounded-lg border border-neutral-200 bg-white p-5">
-					<p className="text-xs uppercase tracking-wider text-neutral-500">
-						Pending approval
-					</p>
-					<p className="mt-1 text-2xl font-bold">{stats.pendingCount}</p>
 				</div>
 				<div className="rounded-lg border border-neutral-200 bg-white p-5">
 					<p className="text-xs uppercase tracking-wider text-neutral-500">

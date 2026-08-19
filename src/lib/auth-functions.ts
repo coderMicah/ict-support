@@ -24,9 +24,3 @@ export const ensureSession = createServerFn({ method: "GET" }).handler(
 		return session;
 	},
 );
-
-export type ServerSession = Awaited<ReturnType<typeof getSession>>;
-
-export async function getServerSession(): Promise<ServerSession> {
-	return await getSession();
-}

@@ -6,7 +6,6 @@ import { z } from "zod";
 import { can } from "#/lib/access-control";
 import type { ArticleItem } from "#/lib/articles";
 import { getErrorMessage } from "#/lib/errors";
-import type { PortalUser } from "#/lib/types";
 import { formatDate } from "#/lib/utils";
 import {
 	archiveArticle,
@@ -25,7 +24,7 @@ export const Route = createFileRoute("/(protected)/articles/")({
 	validateSearch: (search) => articlesSearchSchema.parse(search),
 	loader: async ({ context }) => ({
 		articles: await getArticles(),
-		user: context.user as PortalUser,
+		user: context.user,
 	}),
 	component: ArticlesPage,
 });
@@ -39,8 +38,7 @@ function ArticlesPage() {
 	const navigate = Route.useNavigate();
 	const [searchInput, setSearchInput] = useState(q ?? "");
 
-	const canPublish =
-		can(user.role, { articles: ["publish"] }) || user.canPublish === true;
+	const canPublish = can(user.role, { articles: ["publish"] });
 	const canArchive = can(user.role, { articles: ["archive"] });
 	const canRestore = can(user.role, { articles: ["restore"] });
 	const canDelete = can(user.role, { articles: ["delete"] });

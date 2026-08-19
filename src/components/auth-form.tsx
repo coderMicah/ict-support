@@ -52,11 +52,6 @@ export function AuthForm({ mode }: AuthFormProps) {
 			const { error: authError } = await request;
 
 			if (authError) {
-				if (authError.code === "ACCOUNT_PENDING_APPROVAL") {
-					await navigate({ to: "/pending-approval", replace: true });
-					return;
-				}
-
 				setError(getErrorMessage(authError));
 				setLoading(false);
 				return;

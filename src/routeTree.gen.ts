@@ -14,7 +14,6 @@ import { Route as authRouteRouteImport } from './routes/(auth)/route'
 import { Route as protectedRouteRouteImport } from './routes/(protected)/route'
 import { Route as DownloadsRouteRouteImport } from './routes/downloads/route'
 import { Route as KbRouteRouteImport } from './routes/kb/route'
-import { Route as PendingApprovalRouteImport } from './routes/pending-approval'
 import { Route as SearchRouteRouteImport } from './routes/search/route'
 import { Route as StaffContactsRouteRouteImport } from './routes/staff-contacts/route'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
@@ -62,11 +61,6 @@ const DownloadsRouteRoute = DownloadsRouteRouteImport.update({
 const KbRouteRoute = KbRouteRouteImport.update({
   id: '/kb',
   path: '/kb',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PendingApprovalRoute = PendingApprovalRouteImport.update({
-  id: '/pending-approval',
-  path: '/pending-approval',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SearchRouteRoute = SearchRouteRouteImport.update({
@@ -204,7 +198,6 @@ export interface FileRoutesByFullPath {
   '/kb': typeof KbRouteRouteWithChildren
   '/search': typeof SearchRouteRouteWithChildren
   '/staff-contacts': typeof StaffContactsRouteRouteWithChildren
-  '/pending-approval': typeof PendingApprovalRoute
   '/admin': typeof protectedAdminRouteRouteWithChildren
   '/sign-in': typeof authSignInRoute
   '/sign-out': typeof authSignOutRoute
@@ -231,7 +224,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/pending-approval': typeof PendingApprovalRoute
   '/sign-in': typeof authSignInRoute
   '/sign-out': typeof authSignOutRoute
   '/sign-up': typeof authSignUpRoute
@@ -264,7 +256,6 @@ export interface FileRoutesById {
   '/kb': typeof KbRouteRouteWithChildren
   '/search': typeof SearchRouteRouteWithChildren
   '/staff-contacts': typeof StaffContactsRouteRouteWithChildren
-  '/pending-approval': typeof PendingApprovalRoute
   '/(protected)/admin': typeof protectedAdminRouteRouteWithChildren
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-out': typeof authSignOutRoute
@@ -297,7 +288,6 @@ export interface FileRouteTypes {
     | '/kb'
     | '/search'
     | '/staff-contacts'
-    | '/pending-approval'
     | '/admin'
     | '/sign-in'
     | '/sign-out'
@@ -324,7 +314,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/pending-approval'
     | '/sign-in'
     | '/sign-out'
     | '/sign-up'
@@ -356,7 +345,6 @@ export interface FileRouteTypes {
     | '/kb'
     | '/search'
     | '/staff-contacts'
-    | '/pending-approval'
     | '/(protected)/admin'
     | '/(auth)/sign-in'
     | '/(auth)/sign-out'
@@ -390,7 +378,6 @@ export interface RootRouteChildren {
   KbRouteRoute: typeof KbRouteRouteWithChildren
   SearchRouteRoute: typeof SearchRouteRouteWithChildren
   StaffContactsRouteRoute: typeof StaffContactsRouteRouteWithChildren
-  PendingApprovalRoute: typeof PendingApprovalRoute
   UploadsKeyRoute: typeof UploadsKeyRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   UploadsDocumentsKeyRoute: typeof UploadsDocumentsKeyRoute
@@ -431,13 +418,6 @@ declare module '@tanstack/react-router' {
       path: '/kb'
       fullPath: '/kb'
       preLoaderRoute: typeof KbRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pending-approval': {
-      id: '/pending-approval'
-      path: '/pending-approval'
-      fullPath: '/pending-approval'
-      preLoaderRoute: typeof PendingApprovalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/search': {
@@ -743,7 +723,6 @@ const rootRouteChildren: RootRouteChildren = {
   KbRouteRoute: KbRouteRouteWithChildren,
   SearchRouteRoute: SearchRouteRouteWithChildren,
   StaffContactsRouteRoute: StaffContactsRouteRouteWithChildren,
-  PendingApprovalRoute: PendingApprovalRoute,
   UploadsKeyRoute: UploadsKeyRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   UploadsDocumentsKeyRoute: UploadsDocumentsKeyRoute,
