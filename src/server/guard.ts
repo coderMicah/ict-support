@@ -1,24 +1,26 @@
+import { getRequestHeaders } from "@tanstack/react-start/server";
+
 import { can, type Permission } from "#/lib/access-control";
-import { getSession } from "#/lib/auth-functions";
+import { auth } from "#/lib/auth";
 import { ForbiddenError, UnauthorizedError } from "#/lib/errors";
 
-type Session = Awaited<ReturnType<typeof getSession>>;
+export type ServerSession = Awaited<ReturnType<typeof auth.api.getSession>>;
 
-export async function requireServerSession(): Promise<NonNullable<Session>> {
-	const session = await getSession();
+export async function getServerSession(): Promise<ServerSession> {
+	return await auth.api.getSession({
+		headers: getRequestHeaders(),
+	});
+}
+
+export async function requireServerSession(): Promise<
+	NonNullable<ServerSession>
+> {
+	const session = await getServerSession();
 
 	if (!session) {
-		throw new UnauthorizedError();
-	}
-
-	// Better Auth returns banned/banExpires at runtime but doesn't expose them in its types.
-	const user = session.user as Record<string, unknown>;
-	if (user.banned) {
-		const expires =
-			user.banExpires != null ? new Date(user.banExpires as string) : null;
-		if (!expires || expires > new Date()) {
-			throw new ForbiddenError("Your account has been suspended.");
-		}
+		throw new UnauthorizedError(
+			"You must be signed in to perform this action.",
+		);
 	}
 
 	return session;
@@ -26,7 +28,7 @@ export async function requireServerSession(): Promise<NonNullable<Session>> {
 
 export async function requirePermission(
 	permission: Permission,
-): Promise<NonNullable<Session>> {
+): Promise<NonNullable<ServerSession>> {
 	const session = await requireServerSession();
 
 	if (!can(session.user.role, permission)) {
@@ -36,6 +38,12 @@ export async function requirePermission(
 	return session;
 }
 
-export async function requireAdminRole(): Promise<NonNullable<Session>> {
-	return requirePermission({ user: ["list"] });
+export async function requireAdminRole(): Promise<NonNullable<ServerSession>> {
+	const session = await requireServerSession();
+
+	if (session.user.role !== "admin") {
+		throw new ForbiddenError("Admin access is required for this action.");
+	}
+
+	return session;
 }
