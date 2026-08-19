@@ -3,9 +3,9 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 import { FormField } from "#/components/form-field";
-import { authClient } from "#/lib/auth-client";
 import { signInSchema, signUpSchema } from "#/lib/schemas/auth";
 import { inputClass } from "#/lib/utils";
+import { signIn, signUp } from "#/server/auth";
 
 export type AuthMode = "sign-in" | "sign-up";
 
@@ -24,23 +24,12 @@ export function AuthForm({ mode }: AuthFormProps) {
 	});
 
 	const onSubmit = async (values: Record<string, unknown>) => {
-		const email = String(values.email ?? "");
-		const password = String(values.password ?? "");
+		const result = isSignUp
+			? await signUp({ data: values as never })
+			: await signIn({ data: values as never });
 
-		const { error } = isSignUp
-			? await authClient.signUp.email({
-					name: String(values.name ?? ""),
-					email,
-					password,
-				})
-			: await authClient.signIn.email({
-					email,
-					password,
-					callbackURL: "/",
-				});
-
-		if (error) {
-			toast.error(error.message ?? "Something went wrong");
+		if (result.error) {
+			toast.error(result.error);
 			return;
 		}
 
