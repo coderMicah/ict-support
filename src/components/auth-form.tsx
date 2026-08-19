@@ -19,9 +19,10 @@ export function AuthForm({ mode }: AuthFormProps) {
 		setError(null);
 		setLoading(true);
 
-		const form = new FormData(event.currentTarget);
-		const email = String(form.get("email") ?? "");
-		const password = String(form.get("password") ?? "");
+		const form = event.currentTarget;
+		const formData = new FormData(form);
+		const email = String(formData.get("email") ?? "");
+		const password = String(formData.get("password") ?? "");
 
 		const onSuccess = async () => {
 			await navigate({ to: "/dashboard", replace: true });
@@ -31,7 +32,7 @@ export function AuthForm({ mode }: AuthFormProps) {
 			mode === "sign-in"
 				? authClient.signIn.email({ email, password })
 				: authClient.signUp.email({
-						name: String(form.get("name") ?? ""),
+						name: String(formData.get("name") ?? ""),
 						email,
 						password,
 					});
@@ -54,7 +55,12 @@ export function AuthForm({ mode }: AuthFormProps) {
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className="space-y-4">
+		<form
+			method="post"
+			onSubmit={handleSubmit}
+			className="space-y-4"
+			noValidate
+		>
 			{error ? (
 				<p
 					role="alert"
@@ -120,7 +126,7 @@ export function AuthForm({ mode }: AuthFormProps) {
 				className="w-full rounded-md bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-60"
 			>
 				{loading
-					? "Please wait…"
+					? "Please wait\u2026"
 					: mode === "sign-in"
 						? "Sign in"
 						: "Create account"}
