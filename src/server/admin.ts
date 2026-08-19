@@ -1,10 +1,17 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequestHeaders } from "@tanstack/react-start/server";
+import { desc, eq } from "drizzle-orm";
 
+import { db } from "#/db";
+import { user } from "#/db/schema";
+import { auth } from "#/lib/auth";
 import {
 	setPublishPermissionSchema,
 	setUserApprovalSchema,
 	setUserRoleSchema,
 } from "#/lib/schemas/admin";
+
+import { requireAdminRole } from "./guard";
 
 export type AdminUser = {
 	id: string;
@@ -22,6 +29,16 @@ export type AdminStats = {
 	userCount: number;
 	pendingCount: number;
 	recentUsers: AdminUser[];
+};
+
+const selectUserRow = {
+	id: user.id,
+	name: user.name,
+	email: user.email,
+	role: user.role,
+	approved: user.approved,
+	canPublish: user.canPublish,
+	createdAt: user.createdAt,
 };
 
 type UserRow = {
@@ -42,11 +59,6 @@ const toAdminUser = (row: UserRow): AdminUser => ({
 export const getAdminStats = createServerFn({
 	method: "GET",
 }).handler(async (): Promise<AdminStats> => {
-	const { requireAdminRole } = await import("./guard");
-	const { desc, eq } = await import("drizzle-orm");
-	const { db } = await import("#/db");
-	const { user } = await import("#/db/schema");
-
 	await requireAdminRole();
 
 	const totalUsers = await db.$count(user);
@@ -55,15 +67,7 @@ export const getAdminStats = createServerFn({
 	const pendingCount = await db.$count(user, eq(user.approved, false));
 
 	const recentUsers = await db
-		.select({
-			id: user.id,
-			name: user.name,
-			email: user.email,
-			role: user.role,
-			approved: user.approved,
-			canPublish: user.canPublish,
-			createdAt: user.createdAt,
-		})
+		.select(selectUserRow)
 		.from(user)
 		.orderBy(desc(user.createdAt))
 		.limit(10);
@@ -80,23 +84,10 @@ export const getAdminStats = createServerFn({
 export const getAdminUsers = createServerFn({
 	method: "GET",
 }).handler(async (): Promise<AdminUser[]> => {
-	const { requireAdminRole } = await import("./guard");
-	const { desc } = await import("drizzle-orm");
-	const { db } = await import("#/db");
-	const { user } = await import("#/db/schema");
-
 	await requireAdminRole();
 
 	const rows = await db
-		.select({
-			id: user.id,
-			name: user.name,
-			email: user.email,
-			role: user.role,
-			approved: user.approved,
-			canPublish: user.canPublish,
-			createdAt: user.createdAt,
-		})
+		.select(selectUserRow)
 		.from(user)
 		.orderBy(desc(user.createdAt));
 
@@ -108,10 +99,6 @@ export const setUserApproval = createServerFn({
 })
 	.validator(setUserApprovalSchema)
 	.handler(async ({ data }) => {
-		const { requireAdminRole } = await import("./guard");
-		const { getRequestHeaders } = await import("@tanstack/react-start/server");
-		const { auth } = await import("#/lib/auth");
-
 		const session = await requireAdminRole();
 
 		if (session.user.id === data.userId) {
@@ -141,10 +128,6 @@ export const setUserRole = createServerFn({
 })
 	.validator(setUserRoleSchema)
 	.handler(async ({ data }) => {
-		const { requireAdminRole } = await import("./guard");
-		const { getRequestHeaders } = await import("@tanstack/react-start/server");
-		const { auth } = await import("#/lib/auth");
-
 		const session = await requireAdminRole();
 
 		if (session.user.id === data.userId) {
@@ -167,11 +150,6 @@ export const setPublishPermission = createServerFn({
 })
 	.validator(setPublishPermissionSchema)
 	.handler(async ({ data }) => {
-		const { requireAdminRole } = await import("./guard");
-		const { eq } = await import("drizzle-orm");
-		const { db } = await import("#/db");
-		const { user } = await import("#/db/schema");
-
 		await requireAdminRole();
 
 		await db

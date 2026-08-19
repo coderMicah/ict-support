@@ -1,7 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import type { Role } from "#/lib/access-control";
 import { searchQuerySchema } from "#/lib/schemas/search";
-import type { SearchResult } from "#/lib/search";
+import { type SearchResult, searchAction } from "#/lib/search";
+
+import { getServerSession } from "./guard";
 
 /**
  * Global search across articles, documents, and contacts.
@@ -16,9 +18,6 @@ export const getSearchResults = createServerFn({
 })
 	.validator(searchQuerySchema)
 	.handler(async ({ data }): Promise<SearchResult> => {
-		const { getServerSession } = await import("./guard");
-		const { searchAction } = await import("#/lib/search");
-
 		const session = await getServerSession();
 		let role: Role | null = null;
 

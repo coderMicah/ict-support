@@ -1,18 +1,27 @@
 import { createServerFn } from "@tanstack/react-start";
 
-import type { DocumentItem } from "#/lib/documents";
+import {
+	approveDocumentAction,
+	archiveDocumentAction,
+	type DocumentItem,
+	deleteDocumentAction,
+	getDocumentAction,
+	listDocumentsAction,
+	restoreDocumentAction,
+	updateDocumentAction,
+	uploadDocumentAction,
+} from "#/lib/documents";
 import {
 	documentIdSchema,
 	documentUpdateSchema,
 	documentUploadSchema,
 } from "#/lib/schemas/documents";
 
+import { requirePermission } from "./guard";
+
 export const getDocuments = createServerFn({
 	method: "GET",
 }).handler(async (): Promise<DocumentItem[]> => {
-	const { requirePermission } = await import("./guard");
-	const { listDocumentsAction } = await import("#/lib/documents");
-
 	await requirePermission({ documents: ["view"] });
 
 	return listDocumentsAction();
@@ -23,9 +32,6 @@ export const getDocument = createServerFn({
 })
 	.validator(documentIdSchema)
 	.handler(async ({ data }): Promise<DocumentItem> => {
-		const { requirePermission } = await import("./guard");
-		const { getDocumentAction } = await import("#/lib/documents");
-
 		await requirePermission({ documents: ["view"] });
 
 		return getDocumentAction(data.id);
@@ -36,9 +42,6 @@ export const uploadDocument = createServerFn({
 })
 	.validator(documentUploadSchema)
 	.handler(async ({ data }): Promise<DocumentItem> => {
-		const { requirePermission } = await import("./guard");
-		const { uploadDocumentAction } = await import("#/lib/documents");
-
 		await requirePermission({ documents: ["create"] });
 
 		return uploadDocumentAction(data);
@@ -49,9 +52,6 @@ export const updateDocument = createServerFn({
 })
 	.validator(documentUpdateSchema)
 	.handler(async ({ data }): Promise<DocumentItem> => {
-		const { requirePermission } = await import("./guard");
-		const { updateDocumentAction } = await import("#/lib/documents");
-
 		await requirePermission({ documents: ["update"] });
 
 		return updateDocumentAction(data.id, data);
@@ -62,9 +62,6 @@ export const approveDocument = createServerFn({
 })
 	.validator(documentIdSchema)
 	.handler(async ({ data }): Promise<DocumentItem> => {
-		const { requirePermission } = await import("./guard");
-		const { approveDocumentAction } = await import("#/lib/documents");
-
 		await requirePermission({ documents: ["approve"] });
 
 		return approveDocumentAction(data.id);
@@ -75,9 +72,6 @@ export const archiveDocument = createServerFn({
 })
 	.validator(documentIdSchema)
 	.handler(async ({ data }): Promise<DocumentItem> => {
-		const { requirePermission } = await import("./guard");
-		const { archiveDocumentAction } = await import("#/lib/documents");
-
 		await requirePermission({ documents: ["archive"] });
 
 		return archiveDocumentAction(data.id);
@@ -88,9 +82,6 @@ export const restoreDocument = createServerFn({
 })
 	.validator(documentIdSchema)
 	.handler(async ({ data }): Promise<DocumentItem> => {
-		const { requirePermission } = await import("./guard");
-		const { restoreDocumentAction } = await import("#/lib/documents");
-
 		await requirePermission({ documents: ["restore"] });
 
 		return restoreDocumentAction(data.id);
@@ -101,9 +92,6 @@ export const deleteDocument = createServerFn({
 })
 	.validator(documentIdSchema)
 	.handler(async ({ data }): Promise<{ ok: true }> => {
-		const { requirePermission } = await import("./guard");
-		const { deleteDocumentAction } = await import("#/lib/documents");
-
 		await requirePermission({ documents: ["delete"] });
 
 		await deleteDocumentAction(data.id);

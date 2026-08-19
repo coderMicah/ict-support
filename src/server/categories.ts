@@ -1,18 +1,23 @@
 import { createServerFn } from "@tanstack/react-start";
 
-import type { CategoryItem } from "#/lib/categories";
+import {
+	type CategoryItem,
+	createCategoryAction,
+	deleteCategoryAction,
+	listCategoriesAction,
+	updateCategoryAction,
+} from "#/lib/categories";
 import {
 	categoryIdSchema,
 	categoryInputSchema,
 	categoryUpdateSchema,
 } from "#/lib/schemas/categories";
 
+import { requirePermission } from "./guard";
+
 export const getCategories = createServerFn({
 	method: "GET",
 }).handler(async (): Promise<CategoryItem[]> => {
-	const { requirePermission } = await import("./guard");
-	const { listCategoriesAction } = await import("#/lib/categories");
-
 	await requirePermission({ categories: ["view"] });
 
 	return listCategoriesAction();
@@ -23,9 +28,6 @@ export const createCategory = createServerFn({
 })
 	.validator(categoryInputSchema)
 	.handler(async ({ data }): Promise<CategoryItem> => {
-		const { requirePermission } = await import("./guard");
-		const { createCategoryAction } = await import("#/lib/categories");
-
 		await requirePermission({ categories: ["create"] });
 
 		return createCategoryAction(data);
@@ -36,9 +38,6 @@ export const updateCategory = createServerFn({
 })
 	.validator(categoryUpdateSchema)
 	.handler(async ({ data }): Promise<CategoryItem> => {
-		const { requirePermission } = await import("./guard");
-		const { updateCategoryAction } = await import("#/lib/categories");
-
 		await requirePermission({ categories: ["update"] });
 
 		return updateCategoryAction(data.id, data);
@@ -49,9 +48,6 @@ export const deleteCategory = createServerFn({
 })
 	.validator(categoryIdSchema)
 	.handler(async ({ data }): Promise<{ ok: true }> => {
-		const { requirePermission } = await import("./guard");
-		const { deleteCategoryAction } = await import("#/lib/categories");
-
 		await requirePermission({ categories: ["delete"] });
 
 		await deleteCategoryAction(data.id);
